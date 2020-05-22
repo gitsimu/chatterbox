@@ -22,8 +22,10 @@ const App = () => {
   return (
     <>
       <h3 className="title">Hello, React & Redux</h3>
-      <VisibleChatWindow database={ database }/>
-      <AddMessage database={ database }/>
+      <div className="chat-window">
+        <VisibleChatWindow database={ database }/>
+        <AddMessage database={ database }/>
+      </div>
     </>
   );
 };

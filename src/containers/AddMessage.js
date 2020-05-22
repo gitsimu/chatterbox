@@ -7,6 +7,8 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/database";
 
+import '../css/style.scss';
+
 const AddMessage = ({ database, dispatch }) => {
   let input
 
@@ -30,12 +32,10 @@ const AddMessage = ({ database, dispatch }) => {
             timestamp: new Date().getTime()
         });
 
-
-        dispatch(addMessage(input.value))
         input.value = ''
       }}>
-        <input ref={node => input = node} />
-        <button type="submit">
+        <input className="message-input" ref={node => input = node} />
+        <button className="message-button-send" type="submit">
           Send
         </button>
       </form>

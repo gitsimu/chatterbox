@@ -10,6 +10,7 @@ const ChatWindow = ({ message, addMessage, database }) => {
     chatRef.on('child_added', function(snapshot) {
       const m = snapshot.val();
       addMessage(m);
+      console.log('[child_add]', m);
     });
   }, []);
 
