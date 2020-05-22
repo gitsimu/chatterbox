@@ -1,0 +1,25 @@
+$fontColor: #2196f3;
+$fontSize: 52px;
+
+.title {
+  color: $fontColor;
+  font-size: $fontSize;
+  text-align: center;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 3px;
+}
+.message.opponent {
+  align-items: 'flex-start';
+}
+.message.myself {
+  align-items: 'flex-end';
+}
+.message-inner {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #eee;
+  border-radius: 3px;
+}
