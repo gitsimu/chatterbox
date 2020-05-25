@@ -12,6 +12,11 @@ $fontSize: 52px;
   max-width: 350px;
   margin: 0 auto;
 
+  .chat-window-body {
+    height: 400px;
+    overflow: auto;
+  }
+
   form {
     display: flex;
   }
@@ -60,5 +65,6 @@ $fontSize: 52px;
 
   .message-inner {
     background: #0080F7;
+    color: #fff;
   }
 }

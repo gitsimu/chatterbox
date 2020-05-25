@@ -2,21 +2,37 @@ import React from 'react';
 import '../css/style.scss';
 
 const Message = (props) => {
-  const messageClassName = 'message opponent'
+  // console.log('props', props);
+  const isMyself = props.info.id === props.userId;
+  // const messageClassName = isMyself ? 'message myself' : 'message opponent'
+
   return (
-    <div className={messageClassName}>
-      <div className="message-inner">
-        { props.message }
-      </div>
-      <div class="message-time">
-        { timestampToTime(props.timestamp, true) }
-      </div>
-    </div>
+    <>
+      { isMyself ? (
+        <div className="message myself">
+          <div className="message-time">
+            { timestampToTime(props.timestamp, true) }
+          </div>
+          <div className="message-inner">
+            { props.message }
+          </div>
+        </div>
+      ) : (
+        <div className="message opponent">
+          <div className="message-inner">
+            { props.message }
+          </div>
+          <div className="message-time">
+            { timestampToTime(props.timestamp, true) }
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
 function timestampToTime(timestamp, isSimple) {
-    var date = new Date(timestamp),
+    const date = new Date(timestamp),
         year = date.getFullYear(),
         month = date.getMonth()+1,
         day = date.getDate(),
@@ -24,8 +40,8 @@ function timestampToTime(timestamp, isSimple) {
         minute = date.getMinutes(),
         week = new Array('일', '월', '화', '수', '목', '금', '토');
 
-    var convertDate = year + "년 "+month+"월 "+ day +"일 ("+ week[date.getDay()] +") ";
-    var convertHour="";
+    const convertDate = year + "년 "+month+"월 "+ day +"일 ("+ week[date.getDay()] +") ";
+    let convertHour = "";
     if(hour < 12){
         convertHour = "오전 " + pad(hour) +":" + pad(minute);
     }else if(hour === 12){

@@ -9,7 +9,7 @@ import "firebase/database";
 
 import '../css/style.scss';
 
-const AddMessage = ({ database, dispatch }) => {
+const AddMessage = ({ database, dispatch, info, state }) => {
   let input
 
   return (
@@ -26,7 +26,7 @@ const AddMessage = ({ database, dispatch }) => {
 
         database.ref('/messages/' + userId + '/' + messageId).set({
             id: messageId,
-            userId: userId,
+            userId: info.id,
             message: input.value,
             type: 1,
             timestamp: new Date().getTime()
@@ -36,11 +36,16 @@ const AddMessage = ({ database, dispatch }) => {
       }}>
         <input className="message-input" ref={node => input = node} />
         <button className="message-button-send" type="submit">
-          Send
+          Send1
         </button>
       </form>
     </div>
   )
 }
 
-export default connect()(AddMessage)
+const mapStateToProps = state => ({
+  info: state.info,
+  message: state.message,
+})
+
+export default connect(mapStateToProps)(AddMessage)

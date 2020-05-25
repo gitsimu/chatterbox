@@ -3,6 +3,7 @@ import { addMessage } from '../actions'
 import ChatWindow from '../components/ChatWindow'
 
 const mapStateToProps = state => ({
+  info: state.info,
   message: state.message,
 })
 
