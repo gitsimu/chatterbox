@@ -3,11 +3,19 @@ import '../css/style.scss';
 
 const Message = (props) => {
   // console.log('props', props);
+
   const isMyself = props.info.id === props.userId;
+  const isSameUser = (props.prev && (props.prev.userId === props.userId));
+  // console.log('issame', isSameUser);
   // const messageClassName = isMyself ? 'message myself' : 'message opponent'
+
+  console.log('prev', props.prev);
 
   return (
     <>
+      { !isSameUser && (
+        <div className="margin-top-15"></div>
+      )}
       { isMyself ? (
         <div className="message myself">
           <div className="message-time">
@@ -19,11 +27,27 @@ const Message = (props) => {
         </div>
       ) : (
         <div className="message opponent">
-          <div className="message-inner">
-            { props.message }
+          <div className="message-profile">
+            { !isSameUser && (
+              <div className="message-profile-icon">Q</div>
+            )}
           </div>
-          <div className="message-time">
-            { timestampToTime(props.timestamp, true) }
+          <div className="message-body">
+            { !isSameUser && (
+              <div className="message-top">
+                <div className="message-name">
+                  QUV
+                </div>
+              </div>
+            )}
+            <div className="message-bottom">
+              <div className="message-inner">
+                { props.message }
+              </div>
+              <div className="message-time">
+                { timestampToTime(props.timestamp, true) }
+              </div>
+            </div>
           </div>
         </div>
       )}

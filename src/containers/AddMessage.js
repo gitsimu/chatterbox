@@ -13,7 +13,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
   let input
 
   return (
-    <div>
+    <div className="bottom">
       <form onSubmit={e => {
         e.preventDefault()
 
@@ -34,6 +34,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
         input.value = ''
       }}>
+        <div className="addOns"></div>
         <input className="message-input" ref={node => input = node} />
         <button className="message-button-send" type="submit">
           Send1

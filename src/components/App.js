@@ -1,6 +1,7 @@
 import React from 'react';
 import AddMessage from '../containers/AddMessage'
 import VisibleChatWindow from '../containers/VisibleChatWindow'
+import Header from '../components/Header'
 import '../css/style.scss';
 
 import FirebaseConfig from '../../firebase.config';
@@ -23,6 +24,7 @@ const App = () => {
     <>
       <h3 className="title">Hello, React & Redux</h3>
       <div className="chat-window">
+        <Header/>
         <VisibleChatWindow database={ database }/>
         <AddMessage database={ database }/>
       </div>

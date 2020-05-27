@@ -8,12 +8,16 @@ $fontSize: 52px;
 }
 
 .chat-window {
-  background: #f9f9f9;
+  background: #fff;
   max-width: 350px;
   margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
 
   .chat-window-body {
-    height: 400px;
+    height: 500px;
+    padding: 5px 0;
     overflow: auto;
   }
 
@@ -21,10 +25,10 @@ $fontSize: 52px;
     display: flex;
   }
   .message-input {
-    padding: 8px;
+    padding: 10px;
     width: 100%;
     outline: none;
-    border: 1px solid #ddd;
+    border: none;
   }
   .message-button-send {
     width: 70px;
@@ -36,27 +40,61 @@ $fontSize: 52px;
 
 .message {
   display: flex;
-  padding: 4px 10px;
+  padding: 2px 10px;
+
   .message-inner {
     display: inline-block;
     padding: 8px 12px;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 14px;
-    white-space: normal;
+
+    text-align: left !important;
+    white-space: pre-line !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
   }
   .message-time {
     font-size: 10px;
     padding: 5px 8px;
-    color: #666;
+    color: rgb(152, 167, 179);
+  }
+  .message-profile {
+    width: 30px;
+  }
+  .message-profile-icon {
+    width: 25px;
+    height: 25px;
+    background: #00aaff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 13px;
+    color: #fff;
   }
 }
 .message.opponent {
-  align-items: flex-end;
-  justify-content: flex-start;
+  // align-items: flex-end;
+  // justify-content: flex-start;
 
   .message-inner {
-    border: 1px solid #eee;
-    background: #fff;
+    background-color: #f0f3f3;
+    color: #222;
+  }
+  .message-top {
+    margin: 2px 0 4px 2px;
+  }
+  .message-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgb(81, 99, 120);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .message-bottom {
+    display: flex;
+    align-items: flex-end;
   }
 }
 .message.myself {
@@ -66,5 +104,56 @@ $fontSize: 52px;
   .message-inner {
     background: #0080F7;
     color: #fff;
+  }
+}
+.margin-top-15 {
+  margin-top: 10px;
+}
+
+
+
+.header {
+  position: relative;
+  background: #444c5d;
+  color: #fff;
+  padding: 0 15px 0 20px;
+  display: flex;
+  height: 50px;
+  align-items: center;
+
+  .header-title {
+    flex: 1;
+  }
+  .header-close {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+
+    &:before,
+    &:after {
+      content: '';
+      width: 20px;
+      height: 2px;
+      background: #ccc;
+      position: absolute;
+      top: 13px;
+      right: 5px;
+      border-radius: 2px;
+    }
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.bottom {
+  border-top: 1px solid #eee;
+
+  .addOns {
+    width: 50px;
   }
 }

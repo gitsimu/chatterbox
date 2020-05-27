@@ -33,6 +33,7 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
         <Message
           info={info}
           key={m.id}
+          prev={message[i - 1]}
           {...m}
         />
       )) }
