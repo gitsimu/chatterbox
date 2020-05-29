@@ -26,7 +26,7 @@ const App = () => {
   //prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.020529.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200529.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
