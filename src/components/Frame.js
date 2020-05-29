@@ -8,12 +8,7 @@ const IFrame = ({ children, ...props }) => {
 
   window.addEventListener('message', function(e) {
     console.log(e.data);
-    if (e.data.state === 'close') {
-      setOpacity(0);
-    }
-    else {
-      setOpacity(1);
-    }
+    setOpacity(e.data.state === 'close' ? 0 : 1);
   });
 
   return (

@@ -15,23 +15,22 @@ import "firebase/database";
 const App = () => {
 
   // dev
-  // React.useEffect(() => {
-  //   let cssLink = document.createElement("link");
-  //   cssLink.href = "style.css";
-  //   cssLink.rel = "stylesheet";
-  //   cssLink.type = "text/css";
-  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
-  // }, []);
-
-  //prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200529.css";
+    cssLink.href = "style.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
   }, []);
 
+  // prod
+  // React.useEffect(() => {
+  //   let cssLink = document.createElement("link");
+  //   cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200529.css";
+  //   cssLink.rel = "stylesheet";
+  //   cssLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
+  // }, []);
 
   if (!firebase.apps.length) {
     firebase.initializeApp(FirebaseConfig);
