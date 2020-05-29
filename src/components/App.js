@@ -16,13 +16,24 @@ const App = () => {
   // third party
   const script = document.createElement('script');
 
+  // dev
+  // React.useEffect(() => {
+  //   let cssLink = document.createElement("link");
+  //   cssLink.href = "style.css";
+  //   cssLink.rel = "stylesheet";
+  //   cssLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
+  // }, []);
+
+  //prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "style.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
   }, []);
+
 
   firebase.initializeApp(FirebaseConfig);
   const database = firebase.database();
