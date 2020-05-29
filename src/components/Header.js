@@ -5,7 +5,7 @@ const Header = (props) => {
   return (
     <div className="header">
         <div className="header-title">
-          <div>QUV</div>
+          <div>Hi there</div>
         </div>
         <div className="header-close"></div>
     </div>

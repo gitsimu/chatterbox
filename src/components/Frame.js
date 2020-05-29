@@ -15,8 +15,8 @@ const IFrame = ({ children, ...props }) => {
         borderRadius: '15px',
         boxShadow: '0 0 15px 5px rgba(0,0,0,0.1)',
         position: 'fixed',
-        bottom: 10,
-        right: 10,
+        bottom: 15,
+        right: 15,
         zIndex: 99999,
       } }>
       {mountNode &&

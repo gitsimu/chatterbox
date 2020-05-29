@@ -36,7 +36,7 @@ const Message = (props) => {
             { !isSameUser && (
               <div className="message-top">
                 <div className="message-name">
-                  QUV
+                  Opponent
                 </div>
               </div>
             )}
