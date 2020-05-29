@@ -9,7 +9,7 @@ const Message = (props) => {
   // console.log('issame', isSameUser);
   // const messageClassName = isMyself ? 'message myself' : 'message opponent'
 
-  console.log('prev', props.prev);
+  // console.log('prev', props.prev);
 
   return (
     <>

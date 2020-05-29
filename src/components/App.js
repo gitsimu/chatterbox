@@ -22,7 +22,6 @@ const App = () => {
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
-    // document.querySelector('iframe').contentDocument.write("<style></style>")
   }, []);
 
   firebase.initializeApp(FirebaseConfig);
@@ -31,7 +30,6 @@ const App = () => {
   return (
     <Frame>
     <>
-      <h3 className="title">Hello, React & Redux</h3>
       <div className="chat-window">
         <Header/>
         <VisibleChatWindow database={ database }/>

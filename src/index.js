@@ -7,10 +7,11 @@ import rootReducer from './reducers';
 import App from './components/App';
 import * as script from './js/script.js';
 
-const rootElement = document.getElementById ('root');
+const rootElement = document.getElementById ('chatterbox-root');
 const store = createStore(rootReducer);
 store.subscribe(() => { console.log('[store]',store.getState())});
 
+let key = 'c1cd7759-9784-4fac-a667-3685d6b2e4a0';
 let uuid = uuidv4();
 
 if (script) {
@@ -23,7 +24,7 @@ if (script) {
   script.setCookie('chatterboxToken', uuid, 3);
 }
 
-store.dispatch({ type: 'CONNECT', id: uuid });
+store.dispatch({ type: 'CONNECT', key: key, id: uuid });
 
 ReactDOM.render(
   <Provider store={store}>

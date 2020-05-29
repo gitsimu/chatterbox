@@ -1,6 +1,10 @@
 $fontColor: #2196f3;
 $fontSize: 52px;
 
+body {
+  margin: 0;
+}
+
 .title {
   color: $fontColor;
   font-size: $fontSize;
@@ -11,9 +15,8 @@ $fontSize: 52px;
   background: #fff;
   max-width: 350px;
   margin: 0 auto;
-  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
+  // box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
 
   .chat-window-body {
     height: 500px;
@@ -23,6 +26,7 @@ $fontSize: 52px;
 
   form {
     display: flex;
+    height: 40px;
     margin: 0;
   }
   .message-input {
@@ -30,6 +34,7 @@ $fontSize: 52px;
     width: 100%;
     outline: none;
     border: none;
+    font-size: 14px;
   }
   .message-button-send {
     width: 70px;
@@ -58,6 +63,7 @@ $fontSize: 52px;
     font-size: 10px;
     padding: 5px 8px;
     color: rgb(152, 167, 179);
+    white-space: nowrap;
   }
   .message-profile {
     width: 30px;
@@ -110,7 +116,6 @@ $fontSize: 52px;
 .margin-top-15 {
   margin-top: 10px;
 }
-
 
 
 .header {

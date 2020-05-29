@@ -4,10 +4,11 @@ import Message from './Message'
 
 const ChatWindow = ({ info, message, addMessage, database }) => {
   const body = React.useRef(null)
-  const chatRef = database.ref('/messages/simu1689').orderByChild('timestamp');
+  const databaseRef = '/' + info.key + '/messages/' + info.id;
+  const chatRef = database.ref(databaseRef).orderByChild('timestamp');
+  // const chatRef = database.ref('/messages/simu1689').orderByChild('timestamp');
 
   React.useEffect(() => {
-    console.log('userEffect');
     chatRef.on('child_added', function(snapshot) {
       const m = snapshot.val();
       addMessage(m);

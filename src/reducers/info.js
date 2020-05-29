@@ -1,4 +1,5 @@
 const initialState = {
+  key: '',
   id: '',
   connected: false,
   isLoading: false,
@@ -10,6 +11,7 @@ const info = (state = [], action) => {
     case 'CONNECT':
       return {
         ...state,
+        key: action.key,
         id: action.id,
         connected: true,
         isLoading: false,

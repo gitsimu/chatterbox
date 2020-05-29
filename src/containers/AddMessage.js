@@ -22,9 +22,11 @@ const AddMessage = ({ database, dispatch, info, state }) => {
         }
 
         const messageId = Math.random().toString(36).substr(2, 9);
-        const userId = 'simu1689';
+        const databaseRef = '/' + info.key + '/messages/' + info.id + '/' + messageId;
+        // const userId = 'simu1689';
 
-        database.ref('/messages/' + userId + '/' + messageId).set({
+        //database.ref('/messages/' + userId + '/' + messageId).set({
+        database.ref(databaseRef).set({
             id: messageId,
             userId: info.id,
             message: input.value,
