@@ -5,7 +5,7 @@
         document.body.appendChild(node);
 
         var script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/bundle.js';
+        script.src = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/bundle.020529.js';
         document.head.appendChild(script);
     }
 })();

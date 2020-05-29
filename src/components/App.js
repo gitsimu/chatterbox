@@ -13,8 +13,6 @@ import "firebase/firestore";
 import "firebase/database";
 
 const App = () => {
-  // third party
-  const script = document.createElement('script');
 
   // dev
   // React.useEffect(() => {
@@ -28,26 +26,37 @@ const App = () => {
   //prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.020529.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
   }, []);
 
 
-  firebase.initializeApp(FirebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(FirebaseConfig);
+  }
   const database = firebase.database();
 
   return (
+    <>
+    <div
+      className='chat-icon'
+      onClick={ ()=> {
+        window.parent.postMessage({ state: 'open' })
+      }}
+      >
+    </div>
     <Frame>
     <>
-      <div className="chat-window">
+      <div className='chat-window'>
         <Header/>
         <VisibleChatWindow database={ database }/>
         <AddMessage database={ database }/>
       </div>
     </>
     </Frame>
+    </>
   );
 };
 

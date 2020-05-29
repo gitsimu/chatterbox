@@ -5,6 +5,22 @@ body {
   margin: 0;
 }
 
+.chat-icon {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #444c5d;
+  border-radius: 50%;
+  z-index: 99998;
+  cursor: pointer;
+}
+
+iframe.chatterbox-iframe {
+  transition: 0.3s ease all;
+}
+
 .title {
   color: $fontColor;
   font-size: $fontSize;
@@ -42,6 +58,9 @@ body {
     background: #eee;
     border: 1px solid #ddd;
     border-left: none;
+  }
+  &.closed {
+    display: none;
   }
 }
 

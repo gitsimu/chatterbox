@@ -7,7 +7,12 @@ const Header = (props) => {
         <div className="header-title">
           <div>Hi there</div>
         </div>
-        <div className="header-close"></div>
+        <div
+          className="header-close"
+          onClick={ ()=> {            
+            window.parent.postMessage({ state: 'close' })
+          }}
+          ></div>
     </div>
   )
 }
