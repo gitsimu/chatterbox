@@ -7,7 +7,7 @@
         var style = document.createElement('link');
         style.rel  = 'stylesheet';
         style.type = 'text/css';
-        style.href = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/chatterbox.20200601.css';
+        style.href = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/chatterbox.2020060101.css';
         style.media = 'all';
         document.head.appendChild(style);
 
