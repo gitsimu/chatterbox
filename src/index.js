@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from './reducers';
 
-import App from './components/App';
+import App from './containers/App';
 import * as script from './js/script.js';
 
 const rootElement = document.getElementById ('chatterbox-root');

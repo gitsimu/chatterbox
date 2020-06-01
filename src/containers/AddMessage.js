@@ -23,9 +23,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
         const messageId = Math.random().toString(36).substr(2, 9);
         const databaseRef = '/' + info.key + '/messages/' + info.id + '/' + messageId;
-        // const userId = 'simu1689';
 
-        //database.ref('/messages/' + userId + '/' + messageId).set({
         database.ref(databaseRef).set({
             id: messageId,
             userId: info.id,
@@ -36,10 +34,13 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
         input.value = ''
       }}>
-        <div className="addOns"></div>
-        <input className="message-input" ref={node => input = node} />
+        <div className="addOns">
+          <i className="icon-paper-clip" aria-hidden="true"></i>
+          <i className="icon-emotsmile" aria-hidden="true"></i>
+        </div>
+        <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
-          Send1
+          <i className="icon-paper-plane" aria-hidden="true" onClick={() => {  }}></i>
         </button>
       </form>
     </div>

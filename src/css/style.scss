@@ -15,6 +15,17 @@ body {
   border-radius: 50%;
   z-index: 99998;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #fff;
+
+  &.chat-icon {
+    padding-right: 2px;
+    padding-top: 2px;
+  }
 }
 
 iframe.chatterbox-iframe {
@@ -35,29 +46,40 @@ iframe.chatterbox-iframe {
   // box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
 
   .chat-window-body {
-    height: 500px;
+    height: 480px;
     padding: 5px 0;
     overflow: auto;
   }
 
   form {
     display: flex;
-    height: 40px;
+    height: 50px;
     margin: 0;
+    align-items: center;
+
   }
   .message-input {
-    padding: 10px;
+    padding: 10px 0;
     width: 100%;
     outline: none;
     border: none;
     font-size: 14px;
   }
   .message-button-send {
-    display: none;
-    width: 70px;
-    background: #eee;
-    border: 1px solid #ddd;
-    border-left: none;
+    width: 80px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f6f9;
+    color: #444c5d;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .message-button-send:hover {
+    color: #00aaff;
   }
   &.closed {
     display: none;
@@ -144,11 +166,12 @@ iframe.chatterbox-iframe {
   color: #fff;
   padding: 0 15px 0 20px;
   display: flex;
-  height: 50px;
+  height: 60px;
   align-items: center;
 
   .header-title {
     flex: 1;
+    padding: 0 10px;
   }
   .header-close {
     position: relative;
@@ -173,6 +196,11 @@ iframe.chatterbox-iframe {
     &:after {
       transform: rotate(-45deg);
     }
+
+    &:hover:before,
+    &:hover:after {
+      background-color: #eee;
+    }
   }
 }
 
@@ -180,6 +208,19 @@ iframe.chatterbox-iframe {
   border-top: 1px solid #eee;
 
   .addOns {
-    width: 50px;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 16px;
+    & > i {
+      color: #444c5d;
+      padding: 5px;
+      cursor: pointer;
+    }
+    & > i:hover {
+      color: #00aaff;
+    }
   }
 }

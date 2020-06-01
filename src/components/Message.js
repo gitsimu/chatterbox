@@ -2,13 +2,11 @@ import React from 'react';
 import '../css/style.scss';
 
 const Message = (props) => {
-  // console.log('props', props);
-
   const isMyself = props.info.id === props.userId;
   const isSameUser = (props.prev && (props.prev.userId === props.userId));
-  // console.log('issame', isSameUser);
-  // const messageClassName = isMyself ? 'message myself' : 'message opponent'
 
+  const userinfo = props.info.userinfo;
+  const nickname = userinfo.nickname ? userinfo.nickname: 'Opponent';
   // console.log('prev', props.prev);
 
   return (
@@ -29,15 +27,13 @@ const Message = (props) => {
         <div className="message opponent">
           <div className="message-profile">
             { !isSameUser && (
-              <div className="message-profile-icon">Q</div>
+              <div className="message-profile-icon">{ nickname.substring(0, 1) }</div>
             )}
           </div>
           <div className="message-body">
             { !isSameUser && (
               <div className="message-top">
-                <div className="message-name">
-                  Opponent
-                </div>
+                <div className="message-name">{ nickname }</div>
               </div>
             )}
             <div className="message-bottom">

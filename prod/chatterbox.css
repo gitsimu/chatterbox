@@ -1,0 +1,15 @@
+#chatterbox-root .chat-icon {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #444c5d;
+  border-radius: 50%;
+  z-index: 99998;
+  cursor: pointer;
+}
+
+#chatterbox-root iframe.chatterbox-iframe {
+  transition: 0.3s ease all;
+}

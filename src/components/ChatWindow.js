@@ -9,6 +9,17 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   // const chatRef = database.ref('/messages/simu1689').orderByChild('timestamp');
 
   React.useEffect(() => {
+    chatRef.once('value', (snapshot) => {
+      if (snapshot.val() === null ) {
+        addMessage({
+          id: "first",
+          message: info.userinfo.firstMessage,
+          timestamp: new Date().getTime(),
+          type: 1,
+          userId: info.key,
+        });
+      }
+    })
     chatRef.on('child_added', function(snapshot) {
       const m = snapshot.val();
       addMessage(m);

@@ -1,6 +1,7 @@
 const initialState = {
   key: '',
   id: '',
+  userinfo: {},
   connected: false,
   isLoading: false,
 };
@@ -15,6 +16,11 @@ const info = (state = [], action) => {
         id: action.id,
         connected: true,
         isLoading: false,
+      };
+    case 'ADD_USERINFO':
+      return {
+        ...state,
+        userinfo: action.userinfo,
       };
     default:
       return state
