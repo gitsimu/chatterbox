@@ -5,12 +5,25 @@ const Message = (props) => {
   const isMyself = props.info.id === props.userId;
   const isSameUser = (props.prev && (props.prev.userId === props.userId));
 
-  const userinfo = props.info.userinfo;
-  const nickname = userinfo.nickname ? userinfo.nickname: 'Opponent';
+  const config = props.info.config;
+  const nickname = config.nickname ? config.nickname: 'Opponent';
   // console.log('prev', props.prev);
+
+  const skipDate = () => {
+    if (!props.prev) return false;
+    else {
+      const prevDate = timestampToDay(props.prev.timestamp);
+      const curDate = timestampToDay(props.timestamp);
+      // console.log('skip', (prevDate === curDate) ? true : false);
+      return (prevDate === curDate) ? true : false;
+    }
+  }
 
   return (
     <>
+      { !skipDate() && (
+        <div className="message-date"><span>{timestampToDay(props.timestamp)}</span></div>
+      )}
       { !isSameUser && (
         <div className="margin-top-15"></div>
       )}
@@ -49,6 +62,17 @@ const Message = (props) => {
       )}
     </>
   )
+}
+
+function timestampToDay(timestamp) {
+  const date = new Date(timestamp);
+  let year = date.getFullYear(),
+      month = date.getMonth()+1,
+      day = date.getDate();
+
+  month = month < 10 ? '0' + month : month;
+  day = day < 10 ? '0' + day : day;
+  return year + '.' + month + '.' + day;
 }
 
 function timestampToTime(timestamp, isSimple) {

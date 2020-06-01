@@ -8,6 +8,8 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   const chatRef = database.ref(databaseRef).orderByChild('timestamp');
   // const chatRef = database.ref('/messages/simu1689').orderByChild('timestamp');
 
+  const [required, isRequired] = React.useState(false);
+
   React.useEffect(() => {
     chatRef.once('value', (snapshot) => {
       if (snapshot.val() === null ) {
@@ -18,6 +20,11 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           type: 1,
           userId: info.key,
         });
+      }
+
+      // 개인정보 받기
+      if (!snapshot.val().userdata) {
+        isRequired(true);
       }
     })
     chatRef.on('child_added', function(snapshot) {
@@ -49,6 +56,26 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           {...m}
         />
       )) }
+
+      {
+        false && (
+          <div
+            className="chat-required-data">
+            <div>
+              <div className="title">이름</div>
+              <input/>
+            </div>
+            <div>
+              <div className="title">연락처</div>
+              <input/>
+            </div>
+            <div>
+              <div className="title">이메일</div>
+              <input/>
+            </div>
+          </div>
+        )
+      }
     </div>
   )
 }

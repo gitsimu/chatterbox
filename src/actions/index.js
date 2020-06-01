@@ -3,9 +3,9 @@ export const connect = info => ({
   info
 })
 
-export const addUserInfo = info => ({
-  type: 'ADD_USERINFO',
-  userinfo: info.userinfo,
+export const addConfig = info => ({
+  type: 'ADD_CONFIG',
+  config: info.config,
 })
 
 export const addMessage = message => ({

@@ -1,7 +1,7 @@
 const initialState = {
   key: '',
   id: '',
-  userinfo: {},
+  config: {},
   connected: false,
   isLoading: false,
 };
@@ -17,10 +17,10 @@ const info = (state = [], action) => {
         connected: true,
         isLoading: false,
       };
-    case 'ADD_USERINFO':
+    case 'ADD_CONFIG':
       return {
         ...state,
-        userinfo: action.userinfo,
+        config: action.config,
       };
     default:
       return state

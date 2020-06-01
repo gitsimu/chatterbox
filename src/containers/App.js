@@ -13,14 +13,29 @@ import "firebase/firestore";
 import "firebase/database";
 
 import { connect } from 'react-redux';
-import { addUserInfo } from '../actions'
+import { addConfig } from '../actions'
 
-const App = ({ info, addUserInfo }) => {
+const App = ({ info, addConfig }) => {
 
   // dev
+  // React.useEffect(() => {
+  //   let cssLink = document.createElement("link");
+  //   cssLink.href = "style.css";
+  //   cssLink.rel = "stylesheet";
+  //   cssLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
+  //
+  //   let simmplelineLink = document.createElement("link");
+  //   simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css";
+  //   simmplelineLink.rel = "stylesheet";
+  //   simmplelineLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink);
+  // }, []);
+
+  // prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "style.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200601.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
@@ -32,15 +47,6 @@ const App = ({ info, addUserInfo }) => {
     document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink);
   }, []);
 
-  // prod
-  // React.useEffect(() => {
-  //   let cssLink = document.createElement("link");
-  //   cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200529.css";
-  //   cssLink.rel = "stylesheet";
-  //   cssLink.type = "text/css";
-  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
-  // }, []);
-
   if (!firebase.apps.length) {
     firebase.initializeApp(FirebaseConfig);
   }
@@ -48,10 +54,10 @@ const App = ({ info, addUserInfo }) => {
 
   React.useEffect(() => {
     const key = info.key;
-    const ref = database.ref('/' + key + '/userinfo');
+    const ref = database.ref('/' + key + '/config');
     ref.once('value', function(snapshot) {
       const data = snapshot.val();
-      addUserInfo({userinfo : data})
+      addConfig({config : data})
     })
   }, []);
 
@@ -69,7 +75,7 @@ const App = ({ info, addUserInfo }) => {
     <>
       <div className='chat-window'>
         <Header/>
-        { info.userinfo && (
+        { info.config && (
           <>
           <VisibleChatWindow database={ database }/>
           <AddMessage database={ database }/>
@@ -91,7 +97,7 @@ const mapStateToProps = state => ({
   info: state.info,
 })
 const mapDispatchToProps = dispatch => ({
-  addUserInfo: i => dispatch(addUserInfo(i)),
+  addConfig: i => dispatch(addConfig(i)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

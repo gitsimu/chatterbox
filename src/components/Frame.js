@@ -3,25 +3,24 @@ import { createPortal } from 'react-dom'
 
 const IFrame = ({ children, ...props }) => {
   const [contentRef, setContentRef] = useState(null)
-  const [opacity, setOpacity] = useState(1);
+  const [active, isActive] = useState(false);
   const mountNode = contentRef && contentRef.contentWindow.document.body
 
   window.addEventListener('message', function(e) {
+    if (!e.data.state) return;
     console.log(e.data);
-    setOpacity(e.data.state === 'close' ? 0 : 1);
+    isActive(e.data.state === 'open' ? true : false);
   });
 
   return (
     <iframe {...props}
-      className='chatterbox-iframe'
+      className={active ? 'chatterbox-iframe active' : 'chatterbox-iframe'}
       ref={setContentRef}
       style={ {
-        opacity: opacity,
-        visibility: opacity === 0 ? 'hidden' : 'visible',
         width: '350px',
         height: '600px',
         border: 'none',
-        borderRadius: '15px',
+        borderRadius: '20px',
         boxShadow: '0 0 15px 5px rgba(0,0,0,0.2)',
         position: 'fixed',
         bottom: 15,

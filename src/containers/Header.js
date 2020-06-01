@@ -4,21 +4,24 @@ import '../css/style.scss';
 import { connect } from 'react-redux';
 
 const Header = ({ props, info }) => {
-  const userinfo = info.userinfo
+  const config = info.config
 
   return (
     <div className="header">
         <div className="header-title">
-          { userinfo && (
-            <div>{userinfo.title}</div>
+          { config && (
+            <>
+            <div className="main">{config.title}</div>
+            <div className="sub">{config.subTitle}</div>
+            </>
           )}
         </div>
         <div
           className="header-close"
-          onClick={ ()=> {
+          onClick={()=> {
             window.parent.postMessage({ state: 'close' })
-          }}
-          ></div>
+          }}>
+        </div>
     </div>
   )
 }

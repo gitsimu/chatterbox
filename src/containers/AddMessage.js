@@ -35,8 +35,10 @@ const AddMessage = ({ database, dispatch, info, state }) => {
         input.value = ''
       }}>
         <div className="addOns">
-          <i className="icon-paper-clip" aria-hidden="true"></i>
-          <i className="icon-emotsmile" aria-hidden="true"></i>
+          <i className="icon-paper-clip"
+            onClick={() => { alert('준비 중입니다.') }}></i>
+          <i className="icon-emotsmile"
+            onClick={() => { alert('준비 중입니다.') }}></i>
         </div>
         <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
