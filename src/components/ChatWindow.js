@@ -6,8 +6,6 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   const body = React.useRef(null)
   const databaseRef = '/' + info.key + '/messages/' + info.id;
   const chatRef = database.ref(databaseRef).orderByChild('timestamp');
-  // const chatRef = database.ref('/messages/simu1689').orderByChild('timestamp');
-
   const [required, isRequired] = React.useState(false);
 
   React.useEffect(() => {
@@ -23,14 +21,14 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
       }
 
       // 개인정보 받기
-      if (!snapshot.val().userdata) {
-        isRequired(true);
-      }
+      // if (!snapshot.val().userdata) {
+      //   isRequired(true);
+      // }
     })
     chatRef.on('child_added', function(snapshot) {
       const m = snapshot.val();
       addMessage(m);
-      console.log('[child_add]', m);
+      console.log('   [child_add]', m);
 
       setTimeout(() => {
         scrollToBottom();
