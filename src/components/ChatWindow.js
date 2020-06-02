@@ -15,7 +15,7 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
       if (snapshot.val() === null ) {
         addMessage({
           id: "first",
-          message: info.userinfo.firstMessage,
+          message: info.config.firstMessage,
           timestamp: new Date().getTime(),
           type: 1,
           userId: info.key,
