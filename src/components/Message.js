@@ -19,6 +19,32 @@ const Message = (props) => {
     }
   }
 
+  let messageInner;
+  if (props.type === 1) {
+    messageInner = <div className="message-inner">{ props.message }</div>;
+  }
+  else {
+    const images = ['jpg', 'png', 'gif', 'jpeg', 'bmp'];
+    const extension = JSON.parse(props.message).location.split('.').pop();
+    if (images.indexOf(extension) > -1) {
+      messageInner = <><img src={ JSON.parse(props.message).location }/>
+      <div className="message-file">
+        <div className="message-file-name">{ JSON.parse(props.message).name }</div>
+        <div className="message-file-size">파일크기 : { JSON.parse(props.message).size }</div>
+        <div className="message-file-expire">유효기간 : 2020.07.03 까지</div>
+        <div className="message-file-save">저장하기</div>
+      </div></>
+    }
+    else {
+      messageInner = <div className="message-file">
+        <div className="message-file-name">{ JSON.parse(props.message).name }</div>
+        <div className="message-file-size">파일크기 : { JSON.parse(props.message).size }</div>
+        <div className="message-file-expire">유효기간 : 2020.07.03 까지</div>
+        <div className="message-file-save">저장하기</div>
+      </div>
+    }
+  }
+
   return (
     <>
       { !skipDate() && (
@@ -27,14 +53,11 @@ const Message = (props) => {
       { !isSameUser && (
         <div className="margin-top-15"></div>
       )}
+
       { isMyself ? (
         <div className="message myself">
-          <div className="message-time">
-            { timestampToTime(props.timestamp, true) }
-          </div>
-          <div className="message-inner">
-            { props.message }
-          </div>
+          <div className="message-time">{ timestampToTime(props.timestamp, true) }</div>
+          { messageInner }
         </div>
       ) : (
         <div className="message opponent">
@@ -50,12 +73,8 @@ const Message = (props) => {
               </div>
             )}
             <div className="message-bottom">
-              <div className="message-inner">
-                { props.message }
-              </div>
-              <div className="message-time">
-                { timestampToTime(props.timestamp, true) }
-              </div>
+              <div className="message-inner">{ props.message }</div>
+              <div className="message-time">{ timestampToTime(props.timestamp, true) }</div>
             </div>
           </div>
         </div>

@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import { addConfig } from '../actions'
 
 const App = ({ info, addConfig }) => {
-
   // dev
   React.useEffect(() => {
     let cssLink = document.createElement("link");
@@ -56,26 +55,29 @@ const App = ({ info, addConfig }) => {
     const key = info.key;
 
     // firebase authorized
+    // https://firebase.google.com/docs/database/security/user-security?hl=ko
     getFirebaseToken(info.id)
       .then(data => {
-        console.log('[Firebase Auth] token', data);
+        // console.log('[Firebase Auth] token', data);
         if (data.result === 'success') {
           firebase.auth().signInWithCustomToken(data.token)
             .then(success => {
-              console.log('[Firebase Auth Valid]', success);
+              // console.log('[Firebase Auth Valid]', success);
               const ref = database.ref('/' + key + '/config');
-              ref.once('value', function(snapshot) {
+              ref.once('value', snapshot => {
                 const data = snapshot.val();
                 addConfig({config : data})
               })
             })
             .catch(error => {
-              console.log('[Firebase Auth Invalid]', error);
+              alert('인증에 실패하였습니다.');
+              // console.log('[Firebase Auth Invalid]', error);
             });
         }
       })
       .catch(error => {
-        console.log('[Firebase Auth] error', error);
+        alert('인증키가 잘못되었습니다.');        
+        // console.log('[Firebase Auth] error', error);
       })
   }, []);
 
@@ -119,11 +121,7 @@ async function getFirebaseToken(uuid) {
   return postData;
 }
 
-// export default App;
-// export default connect(
-//   state => ({ info: state.info }),
-//   dispatch => ({ connect: info => dispatch(connect(info)) })
-// )(App)
+
 const mapStateToProps = state => ({
   info: state.info,
 })

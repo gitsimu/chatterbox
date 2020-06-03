@@ -19,13 +19,19 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           userId: info.key,
         });
       }
+      else {
+        // console.log('snap1', snapshot.val().userinfo, snapshot.val().userinfo.mobile);
+      }
 
       // 개인정보 받기
       // if (!snapshot.val().userdata) {
       //   isRequired(true);
       // }
-    })
-    chatRef.on('child_added', function(snapshot) {
+    });
+    chatRef.on('child_added', snapshot => {
+      if (snapshot.key === 'userinfo'
+       || snapshot.key === 'timestamp') return; // ignore userinfo, timestamp
+
       const m = snapshot.val();
       addMessage(m);
       console.log('   [child_add]', m);
