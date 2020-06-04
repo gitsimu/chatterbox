@@ -13,7 +13,6 @@ body {
   height: 60px;
   background-color: #444c5d;
   border-radius: 50%;
-  z-index: 99998;
   cursor: pointer;
 
   display: flex;
@@ -23,9 +22,22 @@ body {
   color: #fff;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 15px 5px;
 
+  transition: 0.2s ease all;
+  transform: scale(0.85);
+  visibility: hidden;
+  opacity: 0;
+  z-index: 0;
+
   & i {
     padding-right: 2px;
     padding-top: 2px;
+  }
+
+  &.active {
+    transform: scale(1);
+    visibility: visible;
+    opacity: 1;
+    z-index: 99998;
   }
 }
 
@@ -34,6 +46,7 @@ iframe.chatterbox-iframe {
   visibility: hidden !important;
   transform: scale(0.85);
   transition: 0.2s ease all;
+  overflow: hidden;
 }
 iframe.chatterbox-iframe.active {
   opacity: 1 !important;
@@ -220,7 +233,7 @@ iframe.chatterbox-iframe.active {
   &:after {
     content: '';
     border-bottom: 1px solid #f1f2f3;
-    width: 90%;
+    width: 92%;
     position: absolute;
     z-index: 1;
     bottom: 8px;
@@ -264,6 +277,21 @@ iframe.chatterbox-iframe.active {
     cursor: pointer;
     text-align: center;
     border-top: 1px solid #eee;
+  }
+  & .message-file-save:hover {
+    text-decoration: underline;
+  }
+}
+.message-thumbnail {
+  max-width: 250px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 3px;
+  cursor: pointer;
+
+  & img {
+    max-width: 250px;
   }
 }
 

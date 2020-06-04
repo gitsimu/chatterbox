@@ -3,7 +3,7 @@ import '../css/style.scss';
 
 import { connect } from 'react-redux';
 
-const Header = ({ props, info }) => {
+const Header = ({ props, info, isIconActive }) => {
   const config = info.config
 
   return (
@@ -11,15 +11,16 @@ const Header = ({ props, info }) => {
         <div className="header-title">
           { config && (
             <>
-            <div className="main">{config.title}</div>
-            <div className="sub">{config.subTitle}</div>
+              <div className="main">{config.title}</div>
+              <div className="sub">{config.subTitle}</div>
             </>
           )}
         </div>
         <div
           className="header-close"
-          onClick={()=> {
+          onClick={() => {
             window.parent.postMessage({ state: 'close' })
+            isIconActive(true);
           }}>
         </div>
     </div>

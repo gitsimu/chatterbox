@@ -4,8 +4,7 @@ import AddMessage from '../containers/AddMessage'
 import VisibleChatWindow from '../containers/VisibleChatWindow'
 import Header from './Header'
 import Frame from '../components/Frame'
-import '../css/style.scss';
-
+import axios from 'axios';
 import FirebaseConfig from '../../firebase.config';
 import * as firebase from "firebase/app";
 import "firebase/auth";
@@ -14,12 +13,15 @@ import "firebase/database";
 
 import { connect } from 'react-redux';
 import { addConfig } from '../actions'
+import '../css/style.scss';
 
 const App = ({ info, addConfig }) => {
+  const [iconActive, isIconActive] = React.useState(true);
+
   // dev
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "style.css";
+    cssLink.href = "./style.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
@@ -52,18 +54,14 @@ const App = ({ info, addConfig }) => {
   const database = firebase.database();
 
   React.useEffect(() => {
-    const key = info.key;
-
-    // firebase authorized
     // https://firebase.google.com/docs/database/security/user-security?hl=ko
-    getFirebaseToken(info.id)
-      .then(data => {
-        // console.log('[Firebase Auth] token', data);
+    getFirebaseAuthToken(info.id)
+      .then(res => {
+        const data = res.data;
         if (data.result === 'success') {
           firebase.auth().signInWithCustomToken(data.token)
             .then(success => {
-              // console.log('[Firebase Auth Valid]', success);
-              const ref = database.ref('/' + key + '/config');
+              const ref = database.ref('/' + info.key + '/config');
               ref.once('value', snapshot => {
                 const data = snapshot.val();
                 addConfig({config : data})
@@ -71,30 +69,28 @@ const App = ({ info, addConfig }) => {
             })
             .catch(error => {
               alert('인증에 실패하였습니다.');
-              // console.log('[Firebase Auth Invalid]', error);
             });
         }
       })
       .catch(error => {
-        alert('인증키가 잘못되었습니다.');        
-        // console.log('[Firebase Auth] error', error);
+        alert('인증 서버가 동작하지 않습니다.');
       })
   }, []);
 
   return (
     <>
     <div
-      className='chat-icon'
-      onClick={ ()=> {
+      className={iconActive ? 'chat-icon active' : 'chat-icon'}
+      onClick={ () => {
         window.parent.postMessage({ state: 'open' })
+        isIconActive(false);
       }}
       >
       <i className="icon-paper-plane" aria-hidden="true"></i>
     </div>
     <Frame>
-    <>
       <div className='chat-window'>
-        <Header/>
+        <Header isIconActive={ isIconActive }/>
         { info.config && (
           <>
           <VisibleChatWindow database={ database }/>
@@ -102,23 +98,27 @@ const App = ({ info, addConfig }) => {
           </>
         )}
       </div>
-    </>
     </Frame>
     </>
   );
 };
 
-async function getFirebaseToken(uuid) {
-  const postResponse = await fetch('//localhost:3000/api/auth?uuid=' + uuid, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-    });
+// async function getFirebaseToken(uuid) {
+//   const postResponse = await fetch('//localhost:3000/api/auth?uuid=' + uuid, {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/x-www-form-urlencoded'
+//       },
+//     });
+//
+//   const postData = await postResponse.json();
+//   return postData;
+// }
 
-  const postData = await postResponse.json();
-  return postData;
+const getFirebaseAuthToken = async (uuid) => {
+  const res = await axios.post('//localhost:3000/api/auth', { uuid: uuid })
+  return await res;
 }
 
 
