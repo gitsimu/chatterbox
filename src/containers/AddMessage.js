@@ -6,10 +6,21 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/database";
+import EmojiConatiner from '../components/EmojiConatiner'
 import '../css/style.scss';
 
+
 const AddMessage = ({ database, dispatch, info, state }) => {
+  const [emojiContainer, showEmojiContainer] = React.useState(false);
+  const [selectedEmoji, selectEmoji] = React.useState(null);
   let input
+
+  React.useEffect(() => {
+    console.log(selectedEmoji);
+    if (input && selectedEmoji) {
+      input.value = input.value + selectedEmoji.emoji;
+    }
+  }, [selectedEmoji]);
 
   const sendMessage = (key, id, message, type, database) => {
     const messageId = Math.random().toString(36).substr(2, 9);
@@ -53,8 +64,16 @@ const AddMessage = ({ database, dispatch, info, state }) => {
       })
   }
 
+  const handleEmojiContainer = (e) => {
+    showEmojiContainer(!emojiContainer)
+  }
+
   return (
     <div className="bottom">
+      <EmojiConatiner
+        getState={emojiContainer}
+        setState={showEmojiContainer}
+        selectEmoji={selectEmoji}/>
       <form onSubmit={e => {
         e.preventDefault()
 
@@ -71,7 +90,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
             <input type="file" onChange={e => handleFileInput(e)}/>
           </label>
           <i className="icon-emotsmile"
-            onClick={() => { alert('준비 중입니다.') }}></i>
+            onClick={e => handleEmojiContainer(e)}></i>
         </div>
         <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
