@@ -52,7 +52,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
       }
     }
 
-    return axios.post('//localhost:3000/api/upload', formData, config)
+    return axios.post('//ec2-13-124-219-39.ap-northeast-2.compute.amazonaws.com:3000/api/upload', formData, config)
       .then(res => {
         console.log('upload-success', res);
         if (res.data.result === 'success') {
@@ -77,9 +77,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
       <form onSubmit={e => {
         e.preventDefault()
 
-        if (!input.value.trim()) {
-          return
-        }
+        if (!input.value.trim()) { return; }
 
         sendMessage(info.key, info.id, input.value, 1, database);
         showEmojiContainer(false);

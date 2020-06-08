@@ -42,7 +42,7 @@ const App = ({ info, addConfig }) => {
   // prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.20200608.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.200608.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
@@ -123,7 +123,7 @@ const App = ({ info, addConfig }) => {
 // }
 
 const getFirebaseAuthToken = async (uuid) => {
-  const res = await axios.post('//localhost:3000/api/auth', { uuid: uuid })
+  const res = await axios.post('//ec2-13-124-219-39.ap-northeast-2.compute.amazonaws.com:3000/api/auth', { uuid: uuid })
   return await res;
 }
 
