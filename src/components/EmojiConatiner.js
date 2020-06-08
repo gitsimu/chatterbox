@@ -23,7 +23,7 @@ const EmojiConatiner = (props) => {
             // }
 
             props.selectEmoji({ emoji: e.currentTarget.textContent, timestamp: new Date().getTime() });
-
+            props.setState(false);
             console.log(e)
             console.log(props)
           }}>

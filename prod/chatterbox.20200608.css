@@ -6,7 +6,6 @@
   height: 60px;
   background-color: #444c5d;
   border-radius: 50%;
-  z-index: 99998;
   cursor: pointer;
 
   display: flex;
@@ -15,10 +14,22 @@
   font-size: 28px;
   color: #fff;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 15px 5px;
+
+  transition: 0.2s ease all;
+  transform: scale(0.85);
+  visibility: hidden;
+  opacity: 0;
+  z-index: 0;
 }
 #chatterbox-root .chat-icon i {
   padding-right: 2px;
   padding-top: 2px;
+}
+#chatterbox-root .chat-icon.active {
+  transform: scale(1);
+  visibility: visible;
+  opacity: 1;
+  z-index: 99998;
 }
 
 #chatterbox-root iframe.chatterbox-iframe {
@@ -26,6 +37,7 @@
   visibility: hidden !important;
   transform: scale(0.85);
   transition: 0.2s ease all;
+  overflow: hidden;
 }
 #chatterbox-root iframe.chatterbox-iframe.active {
   opacity: 1 !important;

@@ -7,12 +7,12 @@
         var style = document.createElement('link');
         style.rel  = 'stylesheet';
         style.type = 'text/css';
-        style.href = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/chatterbox.20200602.css';
+        style.href = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/chatterbox.20200608.css';
         style.media = 'all';
         document.head.appendChild(style);
 
         var script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/bundle.20200602.js';
+        script.src = 'https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/bundle.20200608.js';
         document.head.appendChild(script);
     }
 })();

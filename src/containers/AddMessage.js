@@ -82,6 +82,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
         }
 
         sendMessage(info.key, info.id, input.value, 1, database);
+        showEmojiContainer(false);
         input.value = ''
       }}>
         <div className="addOns">
