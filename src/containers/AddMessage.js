@@ -8,6 +8,7 @@ import "firebase/firestore";
 import "firebase/database";
 import EmojiConatiner from '../components/EmojiConatiner'
 import '../css/style.scss';
+import '../js/global.js'
 
 
 const AddMessage = ({ database, dispatch, info, state }) => {
@@ -24,43 +25,54 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
   const sendMessage = (key, id, message, type, database) => {
     const messageId = Math.random().toString(36).substr(2, 9);
-    const messageData = {
+    database.ref('/' + key + '/messages/' + id + '/userinfo').update({
+      lastMessage: message,
       timestamp: new Date().getTime(),
-      userinfo: {
-        lastMessage: message,
-      }
-    }
-    messageData[messageId] = {
+    })
+    database.ref('/' + key + '/messages/' + id + '/' + messageId).update({
       id: messageId,
       userId: id,
       message: message,
       type: type,
       timestamp: new Date().getTime()
-    }
-
-    database.ref('/' + key + '/messages/' + id).update(messageData);
+    })
+    // const messageData = {
+    //   timestamp: new Date().getTime(),
+    //   userinfo: {
+    //     lastMessage: message,
+    //   }
+    // }
+    // messageData[messageId] = {
+    //   id: messageId,
+    //   userId: id,
+    //   message: message,
+    //   type: type,
+    //   timestamp: new Date().getTime()
+    // }
+    //
+    // database.ref('/' + key + '/messages/' + id).update(messageData);
   }
 
   const handleFileInput = async (e) => {
+    const config = { headers: { 'content-type': 'multipart/form-data' } }
     const formData = new FormData();
     formData.append('file', e.target.files[0]);
     formData.append('key', info.key);
 
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data'
-      }
-    }
+    dispatch({ type: 'LOADING', isLoading: true });
 
-    return axios.post('//ec2-13-124-219-39.ap-northeast-2.compute.amazonaws.com:3000/api/upload', formData, config)
+    return axios.post(global.serverAddress + '/api/upload', formData, config)
       .then(res => {
         console.log('upload-success', res);
+        dispatch({ type: 'LOADING', isLoading: false });
+
         if (res.data.result === 'success') {
           sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database);
         }
       })
       .catch(err => {
         console.log('upload-failure', err);
+        dispatch({ type: 'LOADING', isLoading: false });
       })
   }
 
@@ -91,7 +103,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
           <i className="icon-emotsmile"
             onClick={e => handleEmojiContainer(e)}></i>
         </div>
-        <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
+          <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
           <i className="icon-paper-plane" aria-hidden="true" onClick={() => {  }}></i>
         </button>

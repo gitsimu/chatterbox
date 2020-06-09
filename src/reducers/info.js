@@ -4,9 +4,10 @@ const initialState = {
   config: {},
   connected: false,
   isLoading: false,
+  themeColor: '#444C5E',
 };
 
-const info = (state = [], action) => {
+const info = (state = initialState, action) => {
   console.log('[action]:', action);
   switch (action.type) {
     case 'CONNECT':
@@ -22,6 +23,11 @@ const info = (state = [], action) => {
         ...state,
         config: action.config,
       };
+    case 'LOADING':
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
     default:
       return state
   }

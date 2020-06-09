@@ -5,9 +5,13 @@ import { connect } from 'react-redux';
 
 const Header = ({ props, info, isIconActive }) => {
   const config = info.config
+  const themeColor = config.themeColor
 
   return (
-    <div className="header">
+    <div
+      className="header"
+      style={{ backgroundColor: themeColor }}
+      >
         <div className="header-title">
           { config && (
             <>
@@ -19,7 +23,7 @@ const Header = ({ props, info, isIconActive }) => {
         <div
           className="header-close"
           onClick={() => {
-            window.parent.postMessage({ state: 'close' })
+            window.parent.postMessage({ method: 'close' })
             isIconActive(true);
           }}>
         </div>

@@ -6,14 +6,36 @@ const IFrame = ({ children, ...props }) => {
   const [active, isActive] = useState(false);
   const mountNode = contentsRef && contentsRef.contentWindow.document.body
 
+  const [imagePreview, setImagePreview] = useState(null);
+
   React.useEffect(() => {
     window.addEventListener('message', function(e) {
-      if (!e.data.state) return;
+      if (!e.data.method) return;
       console.log(e.data);
-      isActive(e.data.state === 'open' ? true : false);
-    });
 
-    console.log('iframe ref', contentsRef)
+      switch (e.data.method) {
+        case 'open':
+          isActive(true);
+          break;
+        case 'close':
+          isActive(false);
+          break;
+        case 'image':
+          setImagePreview(
+            <div
+              style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}}
+              onClick={(e) => {
+                setImagePreview(null);
+              }}>
+              <img style={{ maxHeight: '80%', maxWidth: '80%', borderRadius: 10 }} src={e.data.url} />
+            </div>
+          )
+          break;
+        default:
+          break;
+      }
+    });
+    // console.log('iframe ref', contentsRef)
   }, []);
 
   if (contentsRef) {
@@ -29,6 +51,7 @@ const IFrame = ({ children, ...props }) => {
   }
 
   return (
+    <>
     <iframe
       {...props}
       className={active ? 'chatterbox-iframe active' : 'chatterbox-iframe'}
@@ -39,6 +62,8 @@ const IFrame = ({ children, ...props }) => {
           mountNode
         )}
     </iframe>
+    { imagePreview }
+    </>
   )
 }
 

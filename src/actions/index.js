@@ -12,3 +12,8 @@ export const addMessage = message => ({
   type: 'ADD_MESSAGE',
   message
 })
+
+export const isLoading = l => ({
+  type: 'LOADING',
+  isLoading: l.isLoading,
+})

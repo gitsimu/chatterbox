@@ -17,32 +17,12 @@ import '../css/style.scss';
 
 const App = ({ info, addConfig }) => {
   const [iconActive, isIconActive] = React.useState(true);
+  const [themeColor, setThemeColor] = React.useState(null);
 
   // dev
-  // React.useEffect(() => {
-  //   let cssLink = document.createElement("link");
-  //   cssLink.href = "./style.css";
-  //   cssLink.rel = "stylesheet";
-  //   cssLink.type = "text/css";
-  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
-  //
-  //   let simmplelineLink = document.createElement("link");
-  //   simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css";
-  //   simmplelineLink.rel = "stylesheet";
-  //   simmplelineLink.type = "text/css";
-  //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink);
-  //
-  //   // Google webfont
-  //   // let webfontLink = document.createElement("link");
-  //   // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap";
-  //   // webfontLink.rel = "stylesheet";
-  //   // document.querySelector('iframe').contentDocument.head.appendChild(webfontLink);
-  // }, []);
-
-  // prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/prod/style.200608.css";
+    cssLink.href = "./style.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
@@ -52,7 +32,29 @@ const App = ({ info, addConfig }) => {
     simmplelineLink.rel = "stylesheet";
     simmplelineLink.type = "text/css";
     document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink);
+
+    // Google webfont
+    // let webfontLink = document.createElement("link");
+    // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap";
+    // webfontLink.rel = "stylesheet";
+    // document.querySelector('iframe').contentDocument.head.appendChild(webfontLink);
   }, []);
+
+  // prod
+  // React.useEffect(() => {
+  //   let cssLink = document.createElement("link");
+  //   // cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/build/style.css";
+  //   cssLink.href = "http://localhost/style.css";
+  //   cssLink.rel = "stylesheet";
+  //   cssLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink);
+  //
+  //   let simmplelineLink = document.createElement("link");
+  //   simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css";
+  //   simmplelineLink.rel = "stylesheet";
+  //   simmplelineLink.type = "text/css";
+  //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink);
+  // }, []);
 
   if (!firebase.apps.length) {
     firebase.initializeApp(FirebaseConfig);
@@ -70,7 +72,8 @@ const App = ({ info, addConfig }) => {
               const ref = database.ref('/' + info.key + '/config');
               ref.once('value', snapshot => {
                 const data = snapshot.val();
-                addConfig({config : data})
+                addConfig({config : data});
+                setThemeColor(data.themeColor);
               })
             })
             .catch(error => {
@@ -85,22 +88,29 @@ const App = ({ info, addConfig }) => {
 
   return (
     <>
-    <div
-      className={iconActive ? 'chat-icon active' : 'chat-icon'}
-      onClick={ () => {
-        window.parent.postMessage({ state: 'open' })
-        isIconActive(false);
-      }}
-      >
-      <i className="icon-paper-plane" aria-hidden="true"></i>
-    </div>
+    { themeColor && (
+      <div
+        className={iconActive ? 'chat-icon active' : 'chat-icon'}
+        style={{ backgroundColor: themeColor }}
+        onClick={ () => {
+          window.parent.postMessage({ method: 'open' })
+          isIconActive(false);
+        }}
+        >
+        <i className="icon-paper-plane" aria-hidden="true"></i>
+      </div>
+    )}
+
     <Frame>
       <div className='chat-window'>
         <Header isIconActive={ isIconActive }/>
-        { info.config && (
+        { (info.config && Object.keys(info.config).length !== 0) && (
           <>
           <VisibleChatWindow database={ database }/>
           <AddMessage database={ database }/>
+          { info.isLoading && (
+            <div id="loading"><div></div></div>
+          )}
           </>
         )}
       </div>
@@ -123,7 +133,7 @@ const App = ({ info, addConfig }) => {
 // }
 
 const getFirebaseAuthToken = async (uuid) => {
-  const res = await axios.post('//ec2-13-124-219-39.ap-northeast-2.compute.amazonaws.com:3000/api/auth', { uuid: uuid })
+  const res = await axios.post(global.serverAddress + '/api/auth', { uuid: uuid })
   return await res;
 }
 
