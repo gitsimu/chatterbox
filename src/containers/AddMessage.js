@@ -25,7 +25,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
   const sendMessage = (key, id, message, type, database) => {
     const messageId = Math.random().toString(36).substr(2, 9);
-    database.ref('/' + key + '/messages/' + id + '/userinfo').update({
+    database.ref('/' + key + '/users/' + id).update({
       lastMessage: message,
       timestamp: new Date().getTime(),
     })
@@ -36,21 +36,11 @@ const AddMessage = ({ database, dispatch, info, state }) => {
       type: type,
       timestamp: new Date().getTime()
     })
-    // const messageData = {
-    //   timestamp: new Date().getTime(),
-    //   userinfo: {
-    //     lastMessage: message,
-    //   }
-    // }
-    // messageData[messageId] = {
-    //   id: messageId,
-    //   userId: id,
-    //   message: message,
-    //   type: type,
-    //   timestamp: new Date().getTime()
-    // }
-    //
-    // database.ref('/' + key + '/messages/' + id).update(messageData);
+
+    database.ref('/' + key + '/recents').update({
+      userId: id,
+      message: message,
+    })
   }
 
   const handleFileInput = async (e) => {
@@ -103,7 +93,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
           <i className="icon-emotsmile"
             onClick={e => handleEmojiContainer(e)}></i>
         </div>
-          <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
+        <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
           <i className="icon-paper-plane" aria-hidden="true" onClick={() => {  }}></i>
         </button>

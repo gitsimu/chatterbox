@@ -8,7 +8,7 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   const chatRef = database.ref(databaseRef).orderByChild('timestamp');
   const [required, isRequired] = React.useState(false);
 
-  React.useEffect(() => {    
+  React.useEffect(() => {
     chatRef.once('value', (snapshot) => {
       if (snapshot.val() === null ) {
         addMessage({
