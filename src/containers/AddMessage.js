@@ -6,7 +6,7 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/database";
-import EmojiConatiner from '../components/EmojiConatiner'
+import EmojiContainer from '../components/EmojiContainer'
 import '../css/style.scss';
 import '../js/global.js'
 
@@ -72,7 +72,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
   return (
     <div className="bottom">
-      <EmojiConatiner
+      <EmojiContainer
         getState={emojiContainer}
         setState={showEmojiContainer}
         selectEmoji={selectEmoji}/>
