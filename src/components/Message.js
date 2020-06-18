@@ -8,6 +8,8 @@ const Message = (props) => {
   const config = props.info.config;
   const nickname = config.nickname ? config.nickname: 'Opponent';
 
+  console.log('pfi', config.profileImage);
+
   const skipDate = () => {
     if (!props.prev) return false;
     else {
@@ -73,7 +75,15 @@ const Message = (props) => {
         <div className="message opponent">
           <div className="message-profile">
             { !isSameUser && (
-              <div className="message-profile-icon">{ nickname.substring(0, 1) }</div>
+              <>
+              { config.profileImage ? (
+                <div className="message-profile-image">
+                  <img src={ JSON.parse(config.profileImage).location }/>
+                </div>
+              ) : (
+                <div className="message-profile-icon">{ nickname.substring(0, 1) }</div>
+              )}
+              </>
             )}
           </div>
           <div className="message-body">

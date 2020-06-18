@@ -192,6 +192,11 @@ iframe.chatterbox-iframe.active {
     font-size: 13px;
     color: #fff;
   }
+  .message-profile-image > img {
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+  }
 }
 .message.opponent {
   // align-items: flex-end;
@@ -330,7 +335,7 @@ iframe.chatterbox-iframe.active {
     }
     & .sub {
       font-size: 12px;
-      color: #ddd;
+      color: #fff;
     }
   }
   .header-close {
@@ -344,7 +349,7 @@ iframe.chatterbox-iframe.active {
       content: '';
       width: 20px;
       height: 2px;
-      background: #ccc;
+      background: #fff;
       position: absolute;
       top: 13px;
       right: 5px;
