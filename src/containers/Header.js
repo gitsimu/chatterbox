@@ -23,7 +23,7 @@ const Header = ({ props, info, isIconActive }) => {
         <div
           className="header-close"
           onClick={() => {
-            window.parent.postMessage({ method: 'close' })
+            window.parent.postMessage({ method: 'close' }, '*')
             isIconActive(true);
           }}>
         </div>

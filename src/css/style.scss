@@ -3,7 +3,7 @@ $fontSize: 52px;
 
 body {
   margin: 0;
-
+  overflow: hidden;
 }
 
 div {
@@ -78,7 +78,8 @@ iframe.chatterbox-iframe.active {
     position: relative;
     height: 490px;
     padding: 5px 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   form {

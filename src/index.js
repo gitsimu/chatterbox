@@ -4,6 +4,9 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from './reducers';
 
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import App from './containers/App';
 import * as script from './js/script.js';
 

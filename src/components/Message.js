@@ -8,8 +8,6 @@ const Message = (props) => {
   const config = props.info.config;
   const nickname = config.nickname ? config.nickname: 'Opponent';
 
-  console.log('pfi', config.profileImage);
-
   const skipDate = () => {
     if (!props.prev) return false;
     else {
@@ -35,7 +33,7 @@ const Message = (props) => {
         <div
           className="message-thumbnail"
           onClick={() => {
-            window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location })
+            window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
           }}>
           <img src={ JSON.parse(props.message).location }/>
         </div>

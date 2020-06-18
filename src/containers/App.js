@@ -43,7 +43,7 @@ const App = ({ info, addConfig }) => {
   // prod
   React.useEffect(() => {
     let cssLink = document.createElement("link");
-    cssLink.href = "https://cdn.jsdelivr.net/gh/gitsimu/chatterbox/build/style.css";
+    cssLink.href = "https://quv.kr/test/chatterbox/style.css";
     // cssLink.href = "http://localhost/style.css";
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
@@ -93,7 +93,7 @@ const App = ({ info, addConfig }) => {
         className={iconActive ? 'chat-icon active' : 'chat-icon'}
         style={{ backgroundColor: themeColor }}
         onClick={ () => {
-          window.parent.postMessage({ method: 'open' })
+          window.parent.postMessage({ method: 'open' }, '*')
           isIconActive(false);
         }}
         >
