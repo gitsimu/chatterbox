@@ -86,6 +86,7 @@ const App = ({ info, addConfig }) => {
       })
   }, []);
 
+  // <i className="icon-paper-plane" aria-hidden="true"></i>
   return (
     <>
     { themeColor && (
@@ -97,7 +98,8 @@ const App = ({ info, addConfig }) => {
           isIconActive(false);
         }}
         >
-        <i className="icon-paper-plane" aria-hidden="true"></i>
+
+        <img src="http://quv.kr/test/chatterbox/icon.png"/>
       </div>
     )}
 

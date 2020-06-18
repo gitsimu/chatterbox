@@ -25,6 +25,9 @@
   padding-right: 2px;
   padding-top: 2px;
 }
+#chatterbox-root .chat-icon > img {
+  width: 75px;
+}
 #chatterbox-root .chat-icon.active {
   transform: scale(1);
   visibility: visible;
