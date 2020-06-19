@@ -60,7 +60,7 @@ const Message = (props) => {
       { !skipDate() && (
         <div className="message-date"><span>{script.timestampToDay(props.timestamp)}</span></div>
       )}
-      { !isSameUser && (
+      { (!isSameUser || !skipDate()) && (
         <div className="margin-top-15"></div>
       )}
 
@@ -72,7 +72,7 @@ const Message = (props) => {
       ) : (
         <div className="message opponent">
           <div className="message-profile">
-            { !isSameUser && (
+            { (!isSameUser || !skipDate()) && (
               <>
               { config.profileImage ? (
                 <div className="message-profile-image">
@@ -85,7 +85,7 @@ const Message = (props) => {
             )}
           </div>
           <div className="message-body">
-            { !isSameUser && (
+            { (!isSameUser || !skipDate()) && (
               <div className="message-top">
                 <div className="message-name">{ nickname }</div>
               </div>

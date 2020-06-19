@@ -331,6 +331,16 @@ iframe.chatterbox-iframe.active {
   box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.15);
   z-index: 1;
 
+  .header-image {
+    display: flex;
+  }
+  .header-image > img {
+    max-height: 30px;
+    max-width: 30px;
+    border-radius: 5px;
+    margin-right: 3px;
+  }
+
   .header-title {
     flex: 1;
     padding: 0 10px;

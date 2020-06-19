@@ -8,24 +8,26 @@ const Header = ({ props, info, isIconActive }) => {
   const themeColor = config.themeColor
 
   return (
-    <div
-      className="header"
-      style={{ backgroundColor: themeColor }}
-      >
-        <div className="header-title">
-          { config && (
-            <>
-              <div className="main">{config.title}</div>
-              <div className="sub">{config.subTitle}</div>
-            </>
-          )}
-        </div>
-        <div
-          className="header-close"
-          onClick={() => {
-            window.parent.postMessage({ method: 'close' }, '*')
-            isIconActive(true);
-          }}>
+    <div className="header"
+      style={{ backgroundColor: themeColor }}>
+      <div className="header-image">
+        { config.profileImage && (
+          <img src={ JSON.parse(config.profileImage).location }/>
+        )}
+      </div>
+      <div className="header-title">
+        { config && (
+          <>
+            <div className="main">{config.title}</div>
+            <div className="sub">{config.subTitle}</div>
+          </>
+        )}
+      </div>
+      <div className="header-close"
+        onClick={() => {
+          window.parent.postMessage({ method: 'close' }, '*')
+          isIconActive(true);
+        }}>
         </div>
     </div>
   )
