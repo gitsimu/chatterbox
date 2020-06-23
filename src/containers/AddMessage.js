@@ -1,43 +1,37 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { addMessage } from '../actions'
-import axios from 'axios';
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/database";
+import axios from 'axios'
 import EmojiContainer from '../components/EmojiContainer'
-import '../css/style.scss';
-import '../js/global.js'
+import * as global from '../js/global.js'
+import '../css/style.scss'
 
-
-const AddMessage = ({ database, dispatch, info, state }) => {
-  const [emojiContainer, showEmojiContainer] = React.useState(false);
-  const [selectedEmoji, selectEmoji] = React.useState(null);
+const AddMessage = ({ database, dispatch, info }) => {
+  const [emojiContainer, showEmojiContainer] = React.useState(false)
+  const [selectedEmoji, selectEmoji] = React.useState(null)
   let input
 
   React.useEffect(() => {
-    console.log(selectedEmoji);
+    console.log(selectedEmoji)
     if (input && selectedEmoji) {
-      input.value = input.value + selectedEmoji.emoji;
+      input.value = input.value + selectedEmoji.emoji
     }
-  }, [selectedEmoji]);
+  }, [selectedEmoji])
 
   const sendMessage = (key, id, message, type, database) => {
-    const messageId = Math.random().toString(36).substr(2, 9);
-    database.ref('/' + key + '/users/' + id).update({
+    const messageId = Math.random().toString(36).substr(2, 9)
+    
+    database.ref(`/${key}/users/${id}`).update({
       lastMessage: message,
       timestamp: new Date().getTime(),
     })
-    database.ref('/' + key + '/messages/' + id + '/' + messageId).update({
+    database.ref(`/${key}/messages/${id}/${messageId}`).update({
       id: messageId,
       userId: id,
       message: message,
       type: type,
       timestamp: new Date().getTime()
     })
-
-    database.ref('/' + key + '/recents').update({
+    database.ref(`/${key}/recents`).update({
       userId: id,
       message: message,
     })
@@ -45,28 +39,28 @@ const AddMessage = ({ database, dispatch, info, state }) => {
 
   const handleFileInput = async (e) => {
     const config = { headers: { 'content-type': 'multipart/form-data' } }
-    const formData = new FormData();
-    formData.append('file', e.target.files[0]);
-    formData.append('key', info.key);
+    const formData = new FormData()
+    formData.append('file', e.target.files[0])
+    formData.append('key', info.key)
 
-    dispatch({ type: 'LOADING', isLoading: true });
+    dispatch({ type: 'LOADING', isLoading: true })
 
-    return axios.post(global.serverAddress + '/api/upload', formData, config)
+    return axios.post(`${global.serverAddress()}/api/upload`, formData, config)
       .then(res => {
-        console.log('upload-success', res);
-        dispatch({ type: 'LOADING', isLoading: false });
+        console.log('upload-success', res)
+        dispatch({ type: 'LOADING', isLoading: false })
 
         if (res.data.result === 'success') {
-          sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database);
+          sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database)
         }
       })
       .catch(err => {
-        console.log('upload-failure', err);
-        dispatch({ type: 'LOADING', isLoading: false });
+        console.log('upload-failure', err)
+        dispatch({ type: 'LOADING', isLoading: false })
       })
   }
 
-  const handleEmojiContainer = (e) => {
+  const handleEmojiContainer = () => {
     showEmojiContainer(!emojiContainer)
   }
 
@@ -77,12 +71,11 @@ const AddMessage = ({ database, dispatch, info, state }) => {
         setState={showEmojiContainer}
         selectEmoji={selectEmoji}/>
       <form onSubmit={e => {
-        e.preventDefault()
+        e.preventDefault()        
+        if (!input.value.trim()) { return }
 
-        if (!input.value.trim()) { return; }
-
-        sendMessage(info.key, info.id, input.value, 1, database);
-        showEmojiContainer(false);
+        sendMessage(info.key, info.id, input.value, 1, database)
+        showEmojiContainer(false)
         input.value = ''
       }}>
         <div className="addOns">
@@ -95,7 +88,7 @@ const AddMessage = ({ database, dispatch, info, state }) => {
         </div>
         <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
         <button className="message-button-send" type="submit">
-          <i className="icon-paper-plane" aria-hidden="true" onClick={() => {  }}></i>
+          <i className="icon-paper-plane" aria-hidden="true"></i>
         </button>
       </form>
     </div>

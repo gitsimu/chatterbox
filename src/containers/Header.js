@@ -1,12 +1,12 @@
-import React from 'react';
-import '../css/style.scss';
+import React from 'react'
+import '../css/style.scss'
 
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
 
-const Header = ({ props, info, isIconActive }) => {
+const Header = ({ info, isIconActive }) => {
   const config = info.config
   const themeColor = config.themeColor
-
+  
   return (
     <div className="header"
       style={{ backgroundColor: themeColor }}>
@@ -26,7 +26,7 @@ const Header = ({ props, info, isIconActive }) => {
       <div className="header-close"
         onClick={() => {
           window.parent.postMessage({ method: 'close' }, '*')
-          isIconActive(true);
+          isIconActive(true)
         }}>
         </div>
     </div>

@@ -5,7 +5,7 @@ export const connect = info => ({
 
 export const addConfig = info => ({
   type: 'ADD_CONFIG',
-  config: info.config,
+  config: info.config
 })
 
 export const addMessage = message => ({
@@ -15,5 +15,5 @@ export const addMessage = message => ({
 
 export const isLoading = l => ({
   type: 'LOADING',
-  isLoading: l.isLoading,
+  isLoading: l.isLoading
 })

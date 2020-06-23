@@ -3,7 +3,7 @@ const message = (state = [], action) => {
     case 'ADD_MESSAGE':
       return [
         ...state,
-        action.message,
+        action.message
       ]
     default:
       return state

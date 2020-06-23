@@ -11,4 +11,4 @@ const mapDispatchToProps = dispatch => ({
   addMessage: m => dispatch(addMessage(m)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatWindow);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatWindow)

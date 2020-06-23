@@ -1,12 +1,9 @@
-import React from 'react';
-import { addMessage } from '../actions'
+import React from 'react'
 import Message from './Message'
 
 const ChatWindow = ({ info, message, addMessage, database }) => {
-  const body = React.useRef(null)
-  const databaseRef = '/' + info.key + '/messages/' + info.id;
-  const chatRef = database.ref(databaseRef).orderByChild('timestamp');
-  const [required, isRequired] = React.useState(false);
+  const body = React.useRef(null)  
+  const chatRef = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
 
   React.useEffect(() => {
     chatRef.once('value', (snapshot) => {
@@ -17,36 +14,32 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           timestamp: new Date().getTime(),
           type: 1,
           userId: info.key,
-        });
+        })
       }
       else {
-        // console.log('snap1', snapshot.val().userinfo, snapshot.val().userinfo.mobile);
+        // console.log('snap1', snapshot.val().userinfo, snapshot.val().userinfo.mobile)
       }
 
       // 개인정보 받기
       // if (!snapshot.val().userdata) {
-      //   isRequired(true);
+      //   isRequired(true)
       // }
-    });
+    })
     chatRef.on('child_added', snapshot => {
       if (snapshot.key === 'userinfo'
-       || snapshot.key === 'timestamp') return; // ignore userinfo, timestamp
+       || snapshot.key === 'timestamp') return // ignore userinfo, timestamp
 
-      const m = snapshot.val();
-      addMessage(m);
-      console.log('   [child_add]', m);
+      const m = snapshot.val()
+      addMessage(m)
+      console.log('   [child_add]', m)
 
       setTimeout(() => {
-        scrollToBottom();
+        if (body && body.current) {
+          body.current.scrollTop = body.current.scrollHeight
+        }
       }, 100)
-    });
-  }, []);
-
-  function scrollToBottom() {
-    if (body && body.current) {
-      body.current.scrollTop = body.current.scrollHeight;
-    }
-  }
+    })
+  }, [])
 
   return (
     <div className="chat-window-body"

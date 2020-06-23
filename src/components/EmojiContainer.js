@@ -1,15 +1,9 @@
-import React from 'react';
-import ReactDOM from "react-dom";
-import '../css/style.scss';
+import React from 'react'
+import '../css/style.scss'
 
 const EmojiConatiner = (props) => {
   // https://getemoji.com/
-  const emoji = '😀,😁,😂,🤣,😃,😄,😅,😆,😉,😊,😋,😎,😍,😘,🥰,😗,😙,😚,☺️,🙂,🤗,🤩,🤔,🤨,😐,😑,😶,🙄,😏,😣,😥,😮,🤐,😯,😪,😫,😴,😌,😛,😜,😝,🤤,😒,😓,😔,😕,🙃,🤑,😲,☹️,🙁,😖,😞,😟,😤,😢,😭,😦,😧,😨,😩,🤯,😬,😰,😱,🥵,🥶,😳,🤪,😵,😡,😠,🤬,😷,🤒,🤕,🤢,🤮,🤧,😇,🤠,🤡,🥳,🥴,🥺,🤥,🤫,🤭,🧐,🤓,😈,👿,👹,👺,💀,👻,👽,🤖,💩,😺,😸,😹,😻,😼,😽,🙀,😿,😾';
-
-  console.log('inputt', props);
-  React.useEffect(() => {
-
-  },[]);
+  const emoji = '😀,😁,😂,🤣,😃,😄,😅,😆,😉,😊,😋,😎,😍,😘,🥰,😗,😙,😚,☺️,🙂,🤗,🤩,🤔,🤨,😐,😑,😶,🙄,😏,😣,😥,😮,🤐,😯,😪,😫,😴,😌,😛,😜,😝,🤤,😒,😓,😔,😕,🙃,🤑,😲,☹️,🙁,😖,😞,😟,😤,😢,😭,😦,😧,😨,😩,🤯,😬,😰,😱,🥵,🥶,😳,🤪,😵,😡,😠,🤬,😷,🤒,🤕,🤢,🤮,🤧,😇,🤠,🤡,🥳,🥴,🥺,🤥,🤫,🤭,🧐,🤓,😈,👿,👹,👺,💀,👻,👽,🤖,💩,😺,😸,😹,😻,😼,😽,🙀,😿,😾'
 
   return (
     <div className={props.getState === true ? 'emoji-container active' : 'emoji-container'}>
@@ -18,13 +12,8 @@ const EmojiConatiner = (props) => {
           key={i}
           className="emoji"
           onClick={(e) => {
-            // const inputElement = document.getElementsByClassName('message-input')[0];
-            // if (inputElement) {
-            //   inputElement.value = inputElement.value + 'emoji'
-            // }
-
-            props.selectEmoji({ emoji: e.currentTarget.textContent, timestamp: new Date().getTime() });
-            props.setState(false);
+            props.selectEmoji({ emoji: e.currentTarget.textContent, timestamp: new Date().getTime() })
+            props.setState(false)
             console.log(e)
             console.log(props)
           }}>
