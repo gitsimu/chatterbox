@@ -2,11 +2,10 @@ import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 
 const IFrame = ({ children, ...props }) => {
-  const [contentsRef, setContentsRef] = useState(null)
   const [active, isActive] = useState(false)
-  const mountNode = contentsRef && contentsRef.contentWindow.document.body
-
+  const [contentsRef, setContentsRef] = useState(null)  
   const [imagePreview, setImagePreview] = useState(null)
+  const mountNode = contentsRef && contentsRef.contentWindow.document.body  
 
   React.useEffect(() => {
     window.addEventListener('message', function(e) {

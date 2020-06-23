@@ -1,7 +1,6 @@
 import React from 'react'
-import '../css/style.scss'
-
 import { connect } from 'react-redux'
+import '../css/style.scss'
 
 const Header = ({ info, isIconActive }) => {
   const config = info.config

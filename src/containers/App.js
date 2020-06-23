@@ -99,7 +99,7 @@ const App = ({ info, addConfig }) => {
           isIconActive(false)
         }}>
 
-        <img src="http://quv.kr/test/chatterbox/icon.png"/>
+        <img src="http://quv.kr/test/chatterbox/icon.png" alt="chat-icon"/>
       </div>
     )}
 

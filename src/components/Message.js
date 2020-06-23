@@ -42,8 +42,7 @@ const Message = (props) => {
         <div className="message-file-name">{ JSON.parse(props.message).name }</div>
         <div className="message-file-size">파일크기 : { script.bytesToSize(JSON.parse(props.message).size) }</div>
         <div className="message-file-expire">유효기간 : { expired } 까지</div>
-        <div
-          className="message-file-save"
+        <div className="message-file-save"
           onClick={() => {
             setTimeout(() => {
               window.open(JSON.parse(props.message).location)

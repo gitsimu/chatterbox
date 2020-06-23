@@ -15,3 +15,6 @@ https://stackoverflow.com/questions/34743264/how-to-set-iframe-content-of-a-reac
 
 ### iframe wrap css
 https://stackoverflow.com/questions/217776/how-to-apply-css-to-iframe
+
+## Javascript standard
+https://standardjs.com/rules-kokr.html

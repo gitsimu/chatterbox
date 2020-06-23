@@ -15,15 +15,7 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           type: 1,
           userId: info.key,
         })
-      }
-      else {
-        // console.log('snap1', snapshot.val().userinfo, snapshot.val().userinfo.mobile)
-      }
-
-      // 개인정보 받기
-      // if (!snapshot.val().userdata) {
-      //   isRequired(true)
-      // }
+      }      
     })
     chatRef.on('child_added', snapshot => {
       if (snapshot.key === 'userinfo'
@@ -42,9 +34,9 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   }, [])
 
   return (
-    <div className="chat-window-body"
-      ref={body}
-      >
+    <div 
+      className="chat-window-body"
+      ref={body}>
       { message.map((m, i) => (
         <Message
           info={info}
@@ -54,25 +46,23 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
         />
       )) }
 
-      {
-        false && (
-          <div
-            className="chat-required-data">
-            <div>
-              <div className="title">이름</div>
-              <input/>
-            </div>
-            <div>
-              <div className="title">연락처</div>
-              <input/>
-            </div>
-            <div>
-              <div className="title">이메일</div>
-              <input/>
-            </div>
+      { false && (
+        <div
+          className="chat-required-data">
+          <div>
+            <div className="title">이름</div>
+            <input/>
           </div>
-        )
-      }
+          <div>
+            <div className="title">연락처</div>
+            <input/>
+          </div>
+          <div>
+            <div className="title">이메일</div>
+            <input/>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

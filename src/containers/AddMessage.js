@@ -10,8 +10,7 @@ const AddMessage = ({ database, dispatch, info }) => {
   const [selectedEmoji, selectEmoji] = React.useState(null)
   let input
 
-  React.useEffect(() => {
-    console.log(selectedEmoji)
+  React.useEffect(() => {    
     if (input && selectedEmoji) {
       input.value = input.value + selectedEmoji.emoji
     }
@@ -19,21 +18,22 @@ const AddMessage = ({ database, dispatch, info }) => {
 
   const sendMessage = (key, id, message, type, database) => {
     const messageId = Math.random().toString(36).substr(2, 9)
-    
+    const lastMessage = (type === 2) ? JSON.parse(message).name : message.trim()
+
     database.ref(`/${key}/users/${id}`).update({
-      lastMessage: message,
-      timestamp: new Date().getTime(),
+      lastMessage: lastMessage,
+      timestamp: new Date().getTime()
     })
     database.ref(`/${key}/messages/${id}/${messageId}`).update({
       id: messageId,
       userId: id,
-      message: message,
+      message: message.trim(),
       type: type,
       timestamp: new Date().getTime()
     })
     database.ref(`/${key}/recents`).update({
       userId: id,
-      message: message,
+      message: message.trim()
     })
   }
 
@@ -57,6 +57,7 @@ const AddMessage = ({ database, dispatch, info }) => {
       .catch(err => {
         console.log('upload-failure', err)
         dispatch({ type: 'LOADING', isLoading: false })
+        if (err) throw err;
       })
   }
 
@@ -72,7 +73,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         selectEmoji={selectEmoji}/>
       <form onSubmit={e => {
         e.preventDefault()        
-        if (!input.value.trim()) { return }
+        if (!input.value.trim()) return
 
         sendMessage(info.key, info.id, input.value, 1, database)
         showEmojiContainer(false)
