@@ -56,7 +56,7 @@ iframe.chatterbox-iframe {
   transform: scale(0.85);
   transition: 0.2s ease all;
   overflow: hidden;
-  font-family: "Avenir", "Noto Sans Japanese", "Hiragino Kaku Gothic ProN", "YuGothic", "Yu Gothic", "メイリオ", "Apple SD Gothic Neo", "Nanum Barun Gothic", "Helvetica", "Arial", "Malgun Gothic", "맑은 고딕", "돋움", "Dotum", "sans-serif";
+  font-family: sans-serif;
 }
 iframe.chatterbox-iframe.active {
   opacity: 1 !important;
@@ -101,6 +101,10 @@ iframe.chatterbox-iframe.active {
     outline: none;
     border: none;
     font-size: 14px;
+    padding: 15px;
+    height: 50px;
+    font-family: sans-serif;
+    resize: none;
   }
   .message-button-send {
     width: 80px;

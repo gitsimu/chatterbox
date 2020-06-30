@@ -2,6 +2,6 @@
 // global.serverAddress = 'http://13.124.219.39'
 
 export const serverAddress = () => {
-    return 'http://13.124.219.39'
+    return 'http://3.34.185.70'
 }
   

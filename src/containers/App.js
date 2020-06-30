@@ -20,41 +20,40 @@ const App = ({ info, addConfig }) => {
   const [themeColor, setThemeColor] = React.useState(null)
 
   // dev
-  React.useEffect(() => {
-    let cssLink = document.createElement("link")
-    cssLink.href = "./style.css"
-    cssLink.rel = "stylesheet"
-    cssLink.type = "text/css"
-    document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
-
-    let simmplelineLink = document.createElement("link")
-    simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
-    simmplelineLink.rel = "stylesheet"
-    simmplelineLink.type = "text/css"
-    document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
-
-    // Google webfont
-    // let webfontLink = document.createElement("link")
-    // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
-    // webfontLink.rel = "stylesheet"
-    // document.querySelector('iframe').contentDocument.head.appendChild(webfontLink)
-  }, [])
-
-  // prod
   // React.useEffect(() => {
   //   let cssLink = document.createElement("link")
-  //   cssLink.href = "https://quv.kr/test/chatterbox/style.css"
-  //   // cssLink.href = "http://localhost/style.css"
+  //   cssLink.href = "./style.css"
   //   cssLink.rel = "stylesheet"
   //   cssLink.type = "text/css"
   //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
-  //
+
   //   let simmplelineLink = document.createElement("link")
   //   simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
   //   simmplelineLink.rel = "stylesheet"
   //   simmplelineLink.type = "text/css"
   //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
+
+  //   // Google webfont
+  //   // let webfontLink = document.createElement("link")
+  //   // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
+  //   // webfontLink.rel = "stylesheet"
+  //   // document.querySelector('iframe').contentDocument.head.appendChild(webfontLink)
   // }, [])
+
+  // prod
+  React.useEffect(() => {
+    let cssLink = document.createElement("link")
+    cssLink.href = `${global.serverAddress()}/plugin/style.css`    
+    cssLink.rel = "stylesheet"
+    cssLink.type = "text/css"
+    document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
+  
+    let simmplelineLink = document.createElement("link")
+    simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    simmplelineLink.rel = "stylesheet"
+    simmplelineLink.type = "text/css"
+    document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
+  }, [])
 
   if (!firebase.apps.length) {
     firebase.initializeApp(FirebaseConfig)
@@ -99,7 +98,7 @@ const App = ({ info, addConfig }) => {
           isIconActive(false)
         }}>
 
-        <img src="http://quv.kr/test/chatterbox/icon.png" alt="chat-icon"/>
+        <img src={`${global.serverAddress()}/resources/icon01_256.png`} alt="chat-icon"/>
       </div>
     )}
 

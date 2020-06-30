@@ -8,7 +8,7 @@ import '../css/style.scss'
 const AddMessage = ({ database, dispatch, info }) => {
   const [emojiContainer, showEmojiContainer] = React.useState(false)
   const [selectedEmoji, selectEmoji] = React.useState(null)
-  let input
+  let form, input
 
   React.useEffect(() => {    
     if (input && selectedEmoji) {
@@ -71,7 +71,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         getState={emojiContainer}
         setState={showEmojiContainer}
         selectEmoji={selectEmoji}/>
-      <form onSubmit={e => {
+      <form ref={node => form = node} onSubmit={e => {
         e.preventDefault()        
         if (!input.value.trim()) return
 
@@ -87,7 +87,15 @@ const AddMessage = ({ database, dispatch, info }) => {
           <i className="icon-emotsmile"
             onClick={e => handleEmojiContainer(e)}></i>
         </div>
-        <input className="message-input" ref={node => input = node} placeholder="메세지를 입력해주세요." />
+        <textarea className="message-input" 
+          ref={node => input = node} 
+          placeholder="메세지를 입력해주세요."
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              form.dispatchEvent(new Event('submit'))
+            }
+          }}/>
         <button className="message-button-send" type="submit">
           <i className="icon-paper-plane" aria-hidden="true"></i>
         </button>
