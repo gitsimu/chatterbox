@@ -33,6 +33,7 @@ const AddMessage = ({ database, dispatch, info }) => {
     })
     database.ref(`/${key}/recents`).update({
       userId: id,
+      type: type,
       message: message.trim()
     })
   }
