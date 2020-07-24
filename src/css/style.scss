@@ -72,7 +72,6 @@ iframe.chatterbox-iframe.active {
 
 .chat-window {
   position: relative;
-  background: #fff;
   max-width: 350px;
   margin: 0 auto;
   overflow: hidden;
@@ -465,6 +464,7 @@ iframe.chatterbox-iframe.active {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.2);
+  z-index: 100;
 
   & > div {
     display: inline-block;

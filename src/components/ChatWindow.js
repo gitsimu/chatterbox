@@ -1,5 +1,6 @@
 import React from 'react'
 import Message from './Message'
+// import * as script from '../js/script.js'
 
 const ChatWindow = ({ info, message, addMessage, database }) => {
   const body = React.useRef(null)  
@@ -21,6 +22,15 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
       if (snapshot.key === 'userinfo'
        || snapshot.key === 'timestamp') return // ignore userinfo, timestamp
 
+      // const isWorkingTime = script.checkWorkingTime(info.config.workingDay)
+      // isWorkingTime && addMessage({
+      //   id: Math.random().toString(36).substr(2, 9),
+      //   message: info.config.workingDay.message,
+      //   timestamp: new Date().getTime(),
+      //   type: 1,
+      //   userId: info.key,
+      // })
+
       const m = snapshot.val()
       addMessage(m)
       console.log('   [child_add]', m)
@@ -36,6 +46,7 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
   return (
     <div 
       className="chat-window-body"
+      style={{backgroundColor: '#fff'}}
       ref={body}>
       { message.map((m, i) => (
         <Message

@@ -1,6 +1,8 @@
 const initialState = {
   key: '',
   id: '',
+  ck: '',
+  muid: '',
   config: {},
   connected: false,
   isLoading: false,
@@ -15,6 +17,8 @@ const info = (state = initialState, action) => {
         ...state,
         key: action.key,
         id: action.id,
+        ck: action.ck,
+        muid: action.muid,
         connected: true,
         isLoading: false
       }

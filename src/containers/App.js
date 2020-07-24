@@ -13,11 +13,14 @@ import "firebase/database"
 import { connect } from 'react-redux'
 import { addConfig } from '../actions'
 import * as global from '../js/global.js'
+import * as script from '../js/script.js'
 import '../css/style.scss'
 
 const App = ({ info, addConfig }) => {
   const [iconActive, isIconActive] = React.useState(true)
-  const [themeColor, setThemeColor] = React.useState(null)
+  const [themeColor, setThemeColor] = React.useState('#00aaff')
+  const [activate, isActivate] = React.useState(true)
+  const [loading, isLoading] = React.useState(false)
 
   // dev
   // React.useEffect(() => {
@@ -32,7 +35,7 @@ const App = ({ info, addConfig }) => {
   //   simmplelineLink.rel = "stylesheet"
   //   simmplelineLink.type = "text/css"
   //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
-
+    
   //   // Google webfont
   //   // let webfontLink = document.createElement("link")
   //   // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
@@ -43,7 +46,7 @@ const App = ({ info, addConfig }) => {
   // prod
   React.useEffect(() => {
     let cssLink = document.createElement("link")
-    cssLink.href = `${global.serverAddress()}/plugin/style.css`    
+    cssLink.href = `${global.serverAddress()}/plugin/style.css`
     cssLink.rel = "stylesheet"
     cssLink.type = "text/css"
     document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
@@ -61,61 +64,121 @@ const App = ({ info, addConfig }) => {
   const database = firebase.database()
 
   React.useEffect(() => {
-    // https://firebase.google.com/docs/database/security/user-security?hl=ko
-    getFirebaseAuthToken(info.id)
-      .then(res => {
-        const data = res.data
-        if (data.result === 'success') {
-          firebase.auth().signInWithCustomToken(data.token)
-            .then(() => {
-              const ref = database.ref('/' + info.key + '/config')
-              ref.once('value', snapshot => {
-                const data = snapshot.val()
-                addConfig({config : data})
-                setThemeColor(data.themeColor)
-              })
-            })
-            .catch(error => {
-              alert('인증에 실패하였습니다.')
-              if (error) { throw error }
-            })
-        }
+    Promise.resolve()
+      .then(() => { isLoading(true)})
+      .then(() => {
+        return getFirebaseAuthToken(info.id)
+          .then(({data}) => {
+            if (data.result !== 'success') throw new Error()
+            return data
+          })
+          .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
       })
-      .catch(error => {
-        alert('인증 서버가 동작하지 않습니다.')
-        if (error) { throw error }
+      .then(data => {
+        return firebase.auth().signInWithCustomToken(data.token)
+          .catch(() => { throw new Error('인증에 실패하였습니다.')})
       })
+      .then(() => {
+        const ref = database.ref('/' + info.key + '/config')
+        ref.once('value', snapshot => {
+          const data = snapshot.val()
+          if (!data) {
+            addConfig({config: {
+              email: '',
+              firstMessage: '방문해주셔서 감사합니다.\n궁금하신 점을 남겨주세요...',
+              mobile: '',
+              nickname: '',
+              subTitle: '',
+              themeColor: '#444c5d',
+              title: window.parent.location.hostname
+            }})
+            setThemeColor('#444c5d')
+          }
+          else {
+            isActivate(script.checkWorkingTime(data.workingDay))
+            addConfig({config : data})
+            setThemeColor(data.themeColor)
+          }
+        })
+      })
+      .catch((error) => error.messages && alert(error.messages))
+      .finally(() => isLoading(false))
+
+    // isLoading(true)
+    // // https://firebase.google.com/docs/database/security/user-security?hl=ko
+    // getFirebaseAuthToken(info.id)
+    //   .then(res => {
+    //     const data = res.data
+    //     if (data.result === 'success') {
+    //       firebase.auth().signInWithCustomToken(data.token)
+    //         .then(() => {
+    //           const ref = database.ref('/' + info.key + '/config')
+    //           ref.once('value', snapshot => {
+    //             const data = snapshot.val()
+    //             if (!data) {
+    //               addConfig({config: {
+    //                 email: '',
+    //                 firstMessage: '방문해주셔서 감사합니다.\n궁금하신 점을 남겨주세요...',
+    //                 mobile: '',
+    //                 nickname: '',
+    //                 subTitle: '',
+    //                 themeColor: '#444c5d',
+    //                 title: window.parent.location.hostname
+    //               }})
+    //               setThemeColor('#444c5d')
+    //             }
+    //             else {
+    //               isActivate(checkWorkingTime(data.workingDay))
+    //               addConfig({config : data})
+    //               setThemeColor(data.themeColor)
+    //             }
+    //           })
+    //         })
+    //         .catch(error => {
+    //           // alert('인증에 실패하였습니다.')
+    //           isActivate(false)
+    //           if (error) { throw error }
+    //         })
+    //         .finally(() => {
+    //           isLoading(false)
+    //         })
+    //     }
+    //   })
+    //   .catch(error => {
+    //     //alert('인증 서버가 동작하지 않습니다.')
+    //     isActivate(false)
+    //     if (error) { throw error }
+    //   })
   }, [])
  
   return (
     <>
-    { themeColor && (
-      <div
-        className={iconActive ? 'chat-icon active' : 'chat-icon'}
-        style={{ backgroundColor: themeColor }}
-        onClick={ () => {
-          window.parent.postMessage({ method: 'open' }, '*')
-          isIconActive(false)
-        }}>
+      {activate && (
+        <>
+          {themeColor && (
+            <div
+              className={iconActive ? 'chat-icon active' : 'chat-icon'}
+              style={{backgroundColor: themeColor}}
+              onClick={() => {
+                window.parent.postMessage({ method: 'open' }, '*')
+                isIconActive(false)
+              }}>
 
-        <img src={`${global.serverAddress()}/resources/icon01_256.png`} alt="chat-icon"/>
-      </div>
-    )}
-
-    <Frame>
-      <div className='chat-window'>
-        <Header isIconActive={ isIconActive }/>
-        { (info.config && Object.keys(info.config).length !== 0) && (
-          <>
-          <VisibleChatWindow database={ database }/>
-          <AddMessage database={ database }/>
-          { info.isLoading && (
-            <div id="loading"><div></div></div>
+              <img src={`${global.serverAddress()}/resources/icon01_256.png`} alt="chat-icon"/>
+            </div>
           )}
-          </>
-        )}
-      </div>
-    </Frame>
+          <Frame>
+            <div className='chat-window'>
+              <Header isIconActive={isIconActive}/>
+                <VisibleChatWindow database={ database }/>
+                <AddMessage database={ database }/>
+                {loading && (
+                  <div id="loading"><div></div></div>
+                )}
+            </div>
+          </Frame>
+        </>
+      )}
     </>
   )
 }

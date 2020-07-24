@@ -2,6 +2,6 @@
 // global.serverAddress = 'http://13.124.219.39'
 
 export const serverAddress = () => {
-    return 'http://3.34.185.70'
+    return 'https://chat.smlog.co.kr'
 }
   

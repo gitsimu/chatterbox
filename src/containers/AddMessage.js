@@ -21,6 +21,8 @@ const AddMessage = ({ database, dispatch, info }) => {
     const lastMessage = (type === 2) ? JSON.parse(message).name : message.trim()
 
     database.ref(`/${key}/users/${id}`).update({
+      ck: info.ck,
+      muid: info.muid,
       lastMessage: lastMessage,
       timestamp: new Date().getTime()
     })

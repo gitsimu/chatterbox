@@ -63,3 +63,41 @@ export const timestampToTime = (timestamp, isSimple) => {
 const pad = (n) => {
   return n > 9 ? "" + n: "0" + n;
 }
+
+export const checkWorkingTime = (w) => { 
+  const week = ["su", "mo", "tu", "we", "th", "fr", "sa"]
+  const today = new Date()
+  const now = parseInt(`${today.getHours()}${today.getMinutes()}`, 10)
+
+  let isValidWeek = true
+  let isValidHour = true 
+  let isValidBreak = true
+
+  // week
+  isValidWeek = w.week.includes(week[today.getDay()])
+
+  // time
+  if (!w.allday) {
+    isValidHour = checkValidHours(w.startWork, w.endWork, now)
+  }
+
+  // break
+  if (w.breaktime) {
+    isValidBreak = !checkValidHours(w.startBreak, w.endBreak, now)
+  }
+
+  console.log('week, hour, break', isValidWeek, isValidHour, isValidBreak )
+  return (isValidWeek && isValidHour && isValidBreak)
+}
+
+const checkValidHours = (start, end, now) => {
+  const s = parseInt(start, 10)
+  const e = parseInt(end, 10)
+  const n = parseInt(now, 10)
+
+  if (s <= e) {
+    return s <= n && n <= e
+  } else {
+    return !(e < n && n < s)
+  }
+}
