@@ -170,8 +170,12 @@ const App = ({ info, addConfig }) => {
           <Frame>
             <div className='chat-window'>
               <Header isIconActive={isIconActive}/>
-                <VisibleChatWindow database={ database }/>
-                <AddMessage database={ database }/>
+                {(info.config && Object.keys(info.config).length !== 0) && (
+                  <>
+                    <VisibleChatWindow database={ database }/>
+                    <AddMessage database={ database }/>
+                  </>
+                )}
                 {loading && (
                   <div id="loading"><div></div></div>
                 )}
