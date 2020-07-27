@@ -3,6 +3,8 @@ const initialState = {
   id: '',
   ck: '',
   muid: '',
+  ip: '',
+  svid: '',
   config: {},
   connected: false,
   isLoading: false,
@@ -19,6 +21,8 @@ const info = (state = initialState, action) => {
         id: action.id,
         ck: action.ck,
         muid: action.muid,
+        ip: action.ip,
+        svid: action.svid,
         connected: true,
         isLoading: false
       }

@@ -23,6 +23,8 @@ const AddMessage = ({ database, dispatch, info }) => {
     database.ref(`/${key}/users/${id}`).update({
       ck: info.ck,
       muid: info.muid,
+      ip: info.ip,
+      svid: info.svid,
       lastMessage: lastMessage,
       timestamp: new Date().getTime()
     })
@@ -96,7 +98,14 @@ const AddMessage = ({ database, dispatch, info }) => {
           onKeyPress={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
-              form.dispatchEvent(new Event('submit'))
+              let submitEvent
+              if(typeof(Event) === 'function') { 
+                submitEvent = new Event('submit') 
+              } else {
+                submitEvent = document.createEvent('Event');
+                submitEvent.initEvent('submit', true, true);
+              }
+              form.dispatchEvent(submitEvent)
             }
           }}/>
         <button className="message-button-send" type="submit">
