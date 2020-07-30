@@ -11,31 +11,35 @@ import "firebase/firestore"
 import "firebase/database"
 
 import { connect } from 'react-redux'
-import { addConfig } from '../actions'
+import { addConfig, reConnect } from '../actions'
 import * as global from '../js/global.js'
 import * as script from '../js/script.js'
 import '../css/style.scss'
 
-const App = ({ info, addConfig }) => {
+const App = ({ info, addConfig, reConnect }) => {
   const [iconActive, isIconActive] = React.useState(true)
   const [themeColor, setThemeColor] = React.useState('#00aaff')
   const [activate, isActivate] = React.useState(true)
   const [loading, isLoading] = React.useState(false)
+  const [closed, isClosed] = React.useState(false)
 
   // dev
   // React.useEffect(() => {
-  //   let cssLink = document.createElement("link")
-  //   cssLink.href = "./style.css"
-  //   cssLink.rel = "stylesheet"
-  //   cssLink.type = "text/css"
-  //   document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
+  //   const iframe = document.querySelector('iframe.chatterbox-iframe')
+  //   if (iframe) {
+  //     let cssLink = document.createElement("link")
+  //     cssLink.href = "./style.css"
+  //     cssLink.rel = "stylesheet"
+  //     cssLink.type = "text/css"
+  //     iframe.contentDocument.head.appendChild(cssLink)
+  
+  //     let simmplelineLink = document.createElement("link")
+  //     simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+  //     simmplelineLink.rel = "stylesheet"
+  //     simmplelineLink.type = "text/css"
+  //     iframe.contentDocument.head.appendChild(simmplelineLink)
+  //   }
 
-  //   let simmplelineLink = document.createElement("link")
-  //   simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
-  //   simmplelineLink.rel = "stylesheet"
-  //   simmplelineLink.type = "text/css"
-  //   document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
-    
   //   // Google webfont
   //   // let webfontLink = document.createElement("link")
   //   // webfontLink.href = "https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
@@ -45,17 +49,25 @@ const App = ({ info, addConfig }) => {
 
   // prod
   React.useEffect(() => {
-    let cssLink = document.createElement("link")
-    cssLink.href = `${global.serverAddress()}/plugin/style.css`
-    cssLink.rel = "stylesheet"
-    cssLink.type = "text/css"
-    document.querySelector('iframe').contentDocument.head.appendChild(cssLink)
-  
-    let simmplelineLink = document.createElement("link")
-    simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
-    simmplelineLink.rel = "stylesheet"
-    simmplelineLink.type = "text/css"
-    document.querySelector('iframe').contentDocument.head.appendChild(simmplelineLink)
+    /* iframe에 Element를 추가할 때 Firefox에서 정상적으로 추가가 되지 않는데 setTimeout을 사용하여 해결
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=297685
+     */
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe.chatterbox-iframe')
+      if (iframe) {
+        let cssLink = document.createElement("link")
+        cssLink.href = `${global.serverAddress()}/plugin/style.css`
+        cssLink.rel = "stylesheet"
+        cssLink.type = "text/css"
+        iframe.contentDocument.head.appendChild(cssLink)
+      
+        let simmplelineLink = document.createElement("link")
+        simmplelineLink.href = "https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+        simmplelineLink.rel = "stylesheet"
+        simmplelineLink.type = "text/css"
+        iframe.contentDocument.head.appendChild(simmplelineLink)
+      }
+    }, 100)
   }, [])
 
   if (!firebase.apps.length) {
@@ -64,6 +76,9 @@ const App = ({ info, addConfig }) => {
   const database = firebase.database()
 
   React.useEffect(() => {
+    let configRef
+    let userRef
+
     Promise.resolve()
       .then(() => { isLoading(true)})
       .then(() => {
@@ -79,18 +94,18 @@ const App = ({ info, addConfig }) => {
           .catch(() => { throw new Error('인증에 실패하였습니다.')})
       })
       .then(() => {
-        const ref = database.ref('/' + info.key + '/config')
-        ref.once('value', snapshot => {
+        configRef = database.ref(`/${info.key}/config`)
+        configRef.once('value', snapshot => {
           const data = snapshot.val()
           if (!data) {
             addConfig({config: {
-              email: '',
-              firstMessage: '방문해주셔서 감사합니다.\n궁금하신 점을 남겨주세요...',
-              mobile: '',
-              nickname: '',
-              subTitle: '',
+              title: '채팅 상담',
+              subTitle: '보통 몇 분 내에 응답합니다',
+              nickname: 'Manager',
+              firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
               themeColor: '#444c5d',
-              title: window.parent.location.hostname
+              email: '',
+              mobile: '',
             }})
             setThemeColor('#444c5d')
           }
@@ -101,55 +116,21 @@ const App = ({ info, addConfig }) => {
           }
         })
       })
+      .then(() => {
+        userRef = database.ref(`/${info.key}/users/${info.id}`)
+        userRef.on('value', snapshot => {
+          const data = snapshot.val()
+          isClosed(data && data.state === 2)
+        })
+      })
       .catch((error) => error.messages && alert(error.messages))
       .finally(() => isLoading(false))
 
-    // isLoading(true)
-    // // https://firebase.google.com/docs/database/security/user-security?hl=ko
-    // getFirebaseAuthToken(info.id)
-    //   .then(res => {
-    //     const data = res.data
-    //     if (data.result === 'success') {
-    //       firebase.auth().signInWithCustomToken(data.token)
-    //         .then(() => {
-    //           const ref = database.ref('/' + info.key + '/config')
-    //           ref.once('value', snapshot => {
-    //             const data = snapshot.val()
-    //             if (!data) {
-    //               addConfig({config: {
-    //                 email: '',
-    //                 firstMessage: '방문해주셔서 감사합니다.\n궁금하신 점을 남겨주세요...',
-    //                 mobile: '',
-    //                 nickname: '',
-    //                 subTitle: '',
-    //                 themeColor: '#444c5d',
-    //                 title: window.parent.location.hostname
-    //               }})
-    //               setThemeColor('#444c5d')
-    //             }
-    //             else {
-    //               isActivate(checkWorkingTime(data.workingDay))
-    //               addConfig({config : data})
-    //               setThemeColor(data.themeColor)
-    //             }
-    //           })
-    //         })
-    //         .catch(error => {
-    //           // alert('인증에 실패하였습니다.')
-    //           isActivate(false)
-    //           if (error) { throw error }
-    //         })
-    //         .finally(() => {
-    //           isLoading(false)
-    //         })
-    //     }
-    //   })
-    //   .catch(error => {
-    //     //alert('인증 서버가 동작하지 않습니다.')
-    //     isActivate(false)
-    //     if (error) { throw error }
-    //   })
-  }, [])
+    return () => {
+      configRef.off()
+      userRef.off()
+    }
+  }, [info.id])
  
   return (
     <>
@@ -173,7 +154,29 @@ const App = ({ info, addConfig }) => {
                 {(info.config && Object.keys(info.config).length !== 0) ? (
                   <>
                     <VisibleChatWindow database={ database }/>
-                    <AddMessage database={ database }/>
+                    {closed ? (
+                      <>
+                        <div style={{backgroundColor: '#fff', height: 50}}></div>
+                        <div 
+                          className="chat-closed" 
+                          onClick={() => {
+                            const uuid = script.uuidv4()
+                            script.setCookie('chatterboxToken', uuid, 3)
+                            reConnect({id: uuid})
+                            isClosed(false)
+                          }}>
+                          <div className="chat-closed-text">
+                            <div>관리자에 의해 대화가 종료되었습니다.</div>
+                            <div>새 대화를 시작하려면 아래 버튼을 클릭해주세요.</div>
+                          </div>
+                          <div className="chat-new-connect">
+                            새 대화 시작하기
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <AddMessage database={ database }/>
+                    )}                    
                   </>
                 ) : (
                   <div style={{height: '100%', backgroundColor: '#fff'}}></div>
@@ -199,6 +202,7 @@ const mapStateToProps = state => ({
 })
 const mapDispatchToProps = dispatch => ({
   addConfig: i => dispatch(addConfig(i)),
+  reConnect: i => dispatch(reConnect(i))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

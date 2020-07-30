@@ -64,10 +64,16 @@ const pad = (n) => {
   return n > 9 ? "" + n: "0" + n;
 }
 
-export const checkWorkingTime = (w) => { 
+export const checkWorkingTime = (w) => {
+  if (!w) {
+    return true
+  }
+
   const week = ["su", "mo", "tu", "we", "th", "fr", "sa"]
   const today = new Date()
-  const now = parseInt(`${today.getHours()}${today.getMinutes()}`, 10)
+  const hour = today.getHours()
+  const minutes = today.getMinutes() < 10 ? `0${today.getMinutes()}` : today.getMinutes()
+  const now = parseInt(`${hour}${minutes}`, 10)
 
   let isValidWeek = true
   let isValidHour = true 
@@ -100,4 +106,11 @@ const checkValidHours = (start, end, now) => {
   } else {
     return !(e < n && n < s)
   }
+}
+
+export const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
 }

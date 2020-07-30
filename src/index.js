@@ -15,12 +15,12 @@ const store = createStore(rootReducer)
 store.subscribe(() => { console.log('[store]',store.getState())})
 
 const key = rootElement.getAttribute('key') || 'rndsmlch1'
-const ck = rootElement.getAttribute('ck')
-const muid = rootElement.getAttribute('muid')
-const ip = rootElement.getAttribute('ip')
-const svid = rootElement.getAttribute('svid')
+const ck = rootElement.getAttribute('ck') || ''
+const muid = rootElement.getAttribute('muid') || ''
+const ip = rootElement.getAttribute('ip') || ''
+const svid = rootElement.getAttribute('svid') || '1240'
 
-let uuid = uuidv4()
+let uuid = script.uuidv4()
 
 if (script) {
   let token = script.getCookie('chatterboxToken')
@@ -41,9 +41,3 @@ ReactDOM.render(
   rootElement
 )
 
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
-}

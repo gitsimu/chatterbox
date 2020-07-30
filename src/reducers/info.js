@@ -26,6 +26,11 @@ const info = (state = initialState, action) => {
         connected: true,
         isLoading: false
       }
+    case 'RE_CONNECT':
+      return {
+        ...state,
+        id: action.id
+      }
     case 'ADD_CONFIG':
       return {
         ...state,

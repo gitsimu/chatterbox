@@ -5,6 +5,8 @@ const message = (state = [], action) => {
         ...state,
         action.message
       ]
+    case 'CLEAR_MESSAGE':
+      return []
     default:
       return state
   }

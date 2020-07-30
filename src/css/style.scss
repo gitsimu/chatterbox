@@ -80,7 +80,7 @@ iframe.chatterbox-iframe.active {
 
   .chat-window-body {
     position: relative;
-    height: 490px;
+    height: calc(100% - 110px);
     padding: 5px 0;
     overflow-y: auto;
     overflow-x: hidden;
@@ -447,6 +447,40 @@ iframe.chatterbox-iframe.active {
   }
   & .emoji:hover {
     background: #f1f2f3;
+  }
+}
+
+.chat-closed {
+  position: absolute;
+  left: 10%;
+  bottom: 20px;
+  width: 80%;  
+  padding: 10px;
+  border: 1px solid #eee;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  // box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.05);
+
+  & .chat-closed-text {
+    margin-bottom: 10px;
+    text-align: center;
+
+    & > div {
+      margin: 3px 0;
+    }
+  }
+  & .chat-new-connect {
+    background: rgba(0, 128, 247, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s ease background-color;
+  }
+  & .chat-new-connect:hover {
+    background: #0080F7;
   }
 }
 

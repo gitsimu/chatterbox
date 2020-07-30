@@ -38,32 +38,69 @@ const AddMessage = ({ database, dispatch, info }) => {
     database.ref(`/${key}/recents`).update({
       userId: id,
       type: type,
-      message: message.trim()
+      message: message.trim(),
+      timestamp: new Date().getTime()
     })
   }
 
+  const checkFile = React.useCallback((target) => {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+    const ALLOW_FILE_EXTENSIONS = [
+      'jpg', 'jpeg', 'gif', 'bmp', 'png', 'tif', 'tiff', 'tga', 'psd', 'ai', // 이미지
+      'mp4', 'm4v', 'avi', 'asf', 'wmv', 'mkv', 'ts', 'mpg', 'mpeg', 'mov',
+      'flv', 'ogv', // 동영상
+      'mp3', 'wav', 'flac', 'tta', 'tak', 'aac', 'wma', 'ogg', 'm4a', // 음성
+      'doc', 'docx', 'hwp', 'txt', 'rtf', 'xml', 'pdf', 'wks', 'wps', 'xps',
+      'md', 'odf', 'odt', 'ods', 'odp', 'csv', 'tsv', 'xls', 'xlsx', 'ppt',
+      'pptx', 'pages', 'key', 'numbers', 'show', 'ce', // 문서
+      'zip', 'gz', 'bz2', 'rar', '7z', 'lzh', 'alz']
+
+    const fileSize = target.size
+    const fileExtension = target.name.split('.').pop().toLowerCase()
+
+    if (MAX_FILE_SIZE < fileSize) {
+      alert('한 번에 업로드 할 수 있는 최대 파일 크기는 5MB 입니다.')
+      return false
+    }
+
+    if (ALLOW_FILE_EXTENSIONS.indexOf(fileExtension) === -1) {
+      alert('지원하지 않는 파일 형식입니다.')
+      return false
+    }
+
+    return true
+  }, [])
+
   const handleFileInput = async (e) => {
+    const target = e.target.files[0]
+    if (!checkFile(target)) return
+
     const config = { headers: { 'content-type': 'multipart/form-data' } }
     const formData = new FormData()
-    formData.append('file', e.target.files[0])
+    formData.append('file', target)
     formData.append('key', info.key)
 
+    console.log('file', target)
     dispatch({ type: 'LOADING', isLoading: true })
 
     return axios.post(`${global.serverAddress()}/api/upload`, formData, config)
       .then(res => {
         console.log('upload-success', res)
-        dispatch({ type: 'LOADING', isLoading: false })
-
         if (res.data.result === 'success') {
           sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database)
         }
       })
       .catch(err => {
         console.log('upload-failure', err)
-        dispatch({ type: 'LOADING', isLoading: false })
-        if (err) throw err;
+        if (err) throw err
       })
+      .finally(() => {
+        dispatch({ type: 'LOADING', isLoading: false })
+      })
+  }
+
+  const handleFileInputClear = (e) => {
+    e.target.value = ''
   }
 
   const handleEmojiContainer = () => {
@@ -87,7 +124,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         <div className="addOns">
           <label>
             <i className="icon-paper-clip"></i>
-            <input type="file" onChange={e => handleFileInput(e)}/>
+            <input type="file" onChange={e => handleFileInput(e)} onClick={e => handleFileInputClear(e)}/>
           </label>
           <i className="icon-emotsmile"
             onClick={e => handleEmojiContainer(e)}></i>

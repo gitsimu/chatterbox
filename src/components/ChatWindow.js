@@ -1,13 +1,15 @@
 import React from 'react'
 import Message from './Message'
-// import * as script from '../js/script.js'
+import * as script from '../js/script.js'
 
-const ChatWindow = ({ info, message, addMessage, database }) => {
-  const body = React.useRef(null)  
-  const chatRef = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
+const ChatWindow = ({ info, message, addMessage, clearMessage, database }) => {
+  const body = React.useRef(null)   
 
   React.useEffect(() => {
+    clearMessage()
+    const chatRef = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
     chatRef.once('value', (snapshot) => {
+      /* 대화 내역 없음 */
       if (snapshot.val() === null ) {
         addMessage({
           id: "first",
@@ -16,7 +18,17 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
           type: 1,
           userId: info.key,
         })
-      }      
+      } 
+      /* 부재중 */
+      if (!script.checkWorkingTime(info.config.workingDay)) {
+        addMessage({
+          id: "missed",
+          message: info.config.workingDay.message,
+          timestamp: new Date().getTime(),
+          type: 1,
+          userId: info.key,
+        })
+      }
     })
     chatRef.on('child_added', snapshot => {
       if (snapshot.key === 'userinfo'
@@ -41,7 +53,11 @@ const ChatWindow = ({ info, message, addMessage, database }) => {
         }
       }, 100)
     })
-  }, [])
+
+    return () => {
+      chatRef.off()
+    }
+  }, [info.id])
 
   return (
     <div 
