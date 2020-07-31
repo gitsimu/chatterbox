@@ -3,7 +3,7 @@ import Message from './Message'
 import * as script from '../js/script.js'
 
 const ChatWindow = ({ info, message, addMessage, clearMessage, database }) => {
-  const body = React.useRef(null)   
+  const body = React.useRef(null)
 
   React.useEffect(() => {
     clearMessage()
@@ -34,18 +34,8 @@ const ChatWindow = ({ info, message, addMessage, clearMessage, database }) => {
       if (snapshot.key === 'userinfo'
        || snapshot.key === 'timestamp') return // ignore userinfo, timestamp
 
-      // const isWorkingTime = script.checkWorkingTime(info.config.workingDay)
-      // isWorkingTime && addMessage({
-      //   id: Math.random().toString(36).substr(2, 9),
-      //   message: info.config.workingDay.message,
-      //   timestamp: new Date().getTime(),
-      //   type: 1,
-      //   userId: info.key,
-      // })
-
       const m = snapshot.val()
       addMessage(m)
-      console.log('   [child_add]', m)
 
       setTimeout(() => {
         if (body && body.current) {

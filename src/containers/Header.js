@@ -24,7 +24,9 @@ const Header = ({ info, isIconActive }) => {
       </div>
       <div className="header-close"
         onClick={() => {
-          window.parent.postMessage({ method: 'close' }, '*')
+          // window.parent.postMessage({ method: 'close' }, '*')
+          const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+          chatterbox.contentWindow.parent.postMessage({ method: 'close' }, '*')
           isIconActive(true)
         }}>
         </div>

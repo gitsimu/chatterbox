@@ -10,7 +10,7 @@ const IFrame = ({ children, ...props }) => {
   React.useEffect(() => {
     window.addEventListener('message', function(e) {
       if (!e.data.method) return
-      console.log(e.data)
+      // console.log(e.data)
 
       switch (e.data.method) {
         case 'open':
@@ -42,7 +42,7 @@ const IFrame = ({ children, ...props }) => {
     contentsRef.style.setProperty('height', '600px', 'important')
     contentsRef.style.setProperty('border', 'none', 'important')
     contentsRef.style.setProperty('border-radius', '20px', 'important')
-    contentsRef.style.setProperty('box-shadow', '0 0 15px 5px rgba(0,0,0,0.2)', 'important')
+    contentsRef.style.setProperty('box-shadow', '0px 5px 30px 0px rgba(0,0,0,0.1)', 'important')
     contentsRef.style.setProperty('position', 'fixed', 'important')
     contentsRef.style.setProperty('bottom', '15px', 'important')
     contentsRef.style.setProperty('right', '15px', 'important')

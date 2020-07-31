@@ -33,7 +33,9 @@ const Message = (props) => {
         <div
           className="message-thumbnail"
           onClick={() => {
-            window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
+            // window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
+            const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+            chatterbox.contentWindow.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
           }}>
           <img src={ JSON.parse(props.message).location }/>
         </div>

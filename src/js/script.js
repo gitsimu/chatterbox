@@ -92,7 +92,7 @@ export const checkWorkingTime = (w) => {
     isValidBreak = !checkValidHours(w.startBreak, w.endBreak, now)
   }
 
-  console.log('week, hour, break', isValidWeek, isValidHour, isValidBreak )
+  // console.log('week, hour, break', isValidWeek, isValidHour, isValidBreak )
   return (isValidWeek && isValidHour && isValidBreak)
 }
 

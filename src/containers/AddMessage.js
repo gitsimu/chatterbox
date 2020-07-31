@@ -80,18 +80,15 @@ const AddMessage = ({ database, dispatch, info }) => {
     formData.append('file', target)
     formData.append('key', info.key)
 
-    console.log('file', target)
     dispatch({ type: 'LOADING', isLoading: true })
 
     return axios.post(`${global.serverAddress()}/api/upload`, formData, config)
       .then(res => {
-        console.log('upload-success', res)
         if (res.data.result === 'success') {
           sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database)
         }
       })
       .catch(err => {
-        console.log('upload-failure', err)
         if (err) throw err
       })
       .finally(() => {

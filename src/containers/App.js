@@ -22,6 +22,11 @@ const App = ({ info, addConfig, reConnect }) => {
   const [activate, isActivate] = React.useState(true)
   const [loading, isLoading] = React.useState(false)
   const [closed, isClosed] = React.useState(false)
+  const [opened, isOpened] = React.useState(false)
+  const [connected, isConnected] = React.useState(false)
+  const [database, setDatabase] = React.useState(null)
+
+  // let database
 
   // dev
   // React.useEffect(() => {
@@ -69,13 +74,14 @@ const App = ({ info, addConfig, reConnect }) => {
       }
     }, 100)
   }, [])
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(FirebaseConfig)
-  }
-  const database = firebase.database()
-
+  
   React.useEffect(() => {
+    if (!opened) return
+
+    console.info('[Smartlog] chat connected')
+    !firebase.apps.length && firebase.initializeApp(FirebaseConfig)
+    const _database = firebase.database()
+
     let configRef
     let userRef
 
@@ -94,7 +100,7 @@ const App = ({ info, addConfig, reConnect }) => {
           .catch(() => { throw new Error('인증에 실패하였습니다.')})
       })
       .then(() => {
-        configRef = database.ref(`/${info.key}/config`)
+        configRef = _database.ref(`/${info.key}/config`)
         configRef.once('value', snapshot => {
           const data = snapshot.val()
           if (!data) {
@@ -117,20 +123,25 @@ const App = ({ info, addConfig, reConnect }) => {
         })
       })
       .then(() => {
-        userRef = database.ref(`/${info.key}/users/${info.id}`)
+        userRef = _database.ref(`/${info.key}/users/${info.id}`)
         userRef.on('value', snapshot => {
           const data = snapshot.val()
           isClosed(data && data.state === 2)
         })
+
+        isConnected(true)
+        setDatabase(_database)
       })
       .catch((error) => error.messages && alert(error.messages))
-      .finally(() => isLoading(false))
+      .finally(() => {
+        isLoading(false)
+      })
 
     return () => {
       configRef.off()
       userRef.off()
     }
-  }, [info.id])
+  }, [info.id, opened])
  
   return (
     <>
@@ -141,8 +152,11 @@ const App = ({ info, addConfig, reConnect }) => {
               className={iconActive ? 'chat-icon active' : 'chat-icon'}
               style={{backgroundColor: themeColor}}
               onClick={() => {
-                window.parent.postMessage({ method: 'open' }, '*')
+                // window.parent.postMessage({ method: 'open' }, '*')
+                const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+                chatterbox.contentWindow.parent.postMessage({ method: 'open' }, '*')
                 isIconActive(false)
+                isOpened(true)
               }}>
 
               <img src={`${global.serverAddress()}/resources/icon01_256.png`} alt="chat-icon"/>
@@ -151,7 +165,7 @@ const App = ({ info, addConfig, reConnect }) => {
           <Frame>
             <div className='chat-window'>
               <Header isIconActive={isIconActive}/>
-                {(info.config && Object.keys(info.config).length !== 0) ? (
+                {(opened && connected && info.config && Object.keys(info.config).length !== 0) ? (
                   <>
                     <VisibleChatWindow database={ database }/>
                     {closed ? (
