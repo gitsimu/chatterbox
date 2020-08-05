@@ -103,22 +103,37 @@ const App = ({ info, addConfig, reConnect }) => {
         configRef = _database.ref(`/${info.key}/config`)
         configRef.once('value', snapshot => {
           const data = snapshot.val()
-          if (!data) {
-            addConfig({config: {
-              title: '채팅 상담',
-              subTitle: '보통 몇 분 내에 응답합니다',
-              nickname: 'Manager',
-              firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
-              themeColor: '#444c5d',
-              email: '',
-              mobile: '',
-            }})
-            setThemeColor('#444c5d')
+          const initConfig = {
+            title: '채팅 상담',
+            subTitle: '보통 몇 분 내에 응답합니다',
+            nickname: 'Manager',
+            firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
+            themeColor: '#444c5d',
+            email: '',
+            mobile: '',
+          }
+          let config
+
+          if (data) {
+            config = {
+              title: data.title || initConfig.title,
+              subTitle:  data.subTitle || initConfig.subTitle,
+              nickname: data.nickname || initConfig.nickname,
+              firstMessage: data.firstMessage || initConfig.firstMessage,
+              themeColor: data.themeColor || initConfig.themeColor,
+              email: data.email || initConfig.email,
+              mobile: data.mobile || initConfig.mobile,
+            }
           }
           else {
+            config = initConfig
+          }
+
+          addConfig({config: config})
+          setThemeColor(config.themeColor)
+
+          if (data && data.workingDay) {
             isActivate(script.checkWorkingTime(data.workingDay))
-            addConfig({config : data})
-            setThemeColor(data.themeColor)
           }
         })
       })

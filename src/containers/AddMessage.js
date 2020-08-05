@@ -8,6 +8,7 @@ import '../css/style.scss'
 const AddMessage = ({ database, dispatch, info }) => {
   const [emojiContainer, showEmojiContainer] = React.useState(false)
   const [selectedEmoji, selectEmoji] = React.useState(null)
+  const [sendingTerm, isSendingTerm] = React.useState(false)
   let form, input
 
   React.useEffect(() => {    
@@ -17,30 +18,49 @@ const AddMessage = ({ database, dispatch, info }) => {
   }, [selectedEmoji])
 
   const sendMessage = (key, id, message, type, database) => {
-    const messageId = Math.random().toString(36).substr(2, 9)
-    const lastMessage = (type === 2) ? JSON.parse(message).name : message.trim()
+    if (!sendingTerm) {
+      isSendingTerm(true)
 
-    database.ref(`/${key}/users/${id}`).update({
-      ck: info.ck,
-      muid: info.muid,
-      ip: info.ip,
-      svid: info.svid,
-      lastMessage: lastMessage,
-      timestamp: new Date().getTime()
-    })
-    database.ref(`/${key}/messages/${id}/${messageId}`).update({
-      id: messageId,
-      userId: id,
-      message: message.trim(),
-      type: type,
-      timestamp: new Date().getTime()
-    })
-    database.ref(`/${key}/recents`).update({
-      userId: id,
-      type: type,
-      message: message.trim(),
-      timestamp: new Date().getTime()
-    })
+      const messageId = Math.random().toString(36).substr(2, 9)
+      // const lastMessage = (type === 2) ? JSON.parse(message).name : message.trim()
+      let trimMessage
+      let lastMessage
+  
+      if (type === 2) {
+        trimMessage = message.trim()
+        lastMessage = JSON.parse(message).name
+      } else {
+        trimMessage = message.trim().substr(0, 20000)
+        lastMessage = trimMessage
+      }
+      
+      database.ref(`/${key}/users/${id}`).update({
+        ck: info.ck,
+        muid: info.muid,
+        ip: info.ip,
+        svid: info.svid,
+        lastMessage: lastMessage,
+        timestamp: new Date().getTime()
+      })
+      database.ref(`/${key}/messages/${id}/${messageId}`).update({
+        id: messageId,
+        userId: id,
+        message: trimMessage,
+        type: type,
+        timestamp: new Date().getTime()
+      })
+      database.ref(`/${key}/recents`).update({
+        userId: id,
+        type: type,
+        message: trimMessage,
+        timestamp: new Date().getTime()
+      })
+
+      // 메세지 발송 텀 0.3s
+      setTimeout(() => {
+        isSendingTerm(false)
+      }, 300)
+    }
   }
 
   const checkFile = React.useCallback((target) => {

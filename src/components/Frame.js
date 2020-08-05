@@ -46,7 +46,7 @@ const IFrame = ({ children, ...props }) => {
     contentsRef.style.setProperty('position', 'fixed', 'important')
     contentsRef.style.setProperty('bottom', '15px', 'important')
     contentsRef.style.setProperty('right', '15px', 'important')
-    contentsRef.style.setProperty('z-index', '999999', 'important')
+    contentsRef.style.setProperty('z-index', '999999999', 'important')
   }
 
   return (

@@ -189,6 +189,7 @@ iframe.chatterbox-iframe.active {
   }
   .message-profile {
     width: 30px;
+    user-select: none;
   }
   .message-profile-icon {
     width: 25px;
@@ -198,7 +199,7 @@ iframe.chatterbox-iframe.active {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    font-size: 13px;
+    font-size: 11px;
     color: #fff;
   }
   .message-profile-image > img {
@@ -249,18 +250,19 @@ iframe.chatterbox-iframe.active {
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  margin: 25px 0 15px;
+  // margin: 25px 0 15px;
+  margin: 15px 0;
   color: #b1b1b1;
   background: #fff;
 
-  &:after {
-    content: '';
-    border-bottom: 1px solid #f1f2f3;
-    width: 92%;
-    position: absolute;
-    z-index: 1;
-    bottom: 8px;
-  }
+  // &:after {
+  //   content: '';
+  //   border-bottom: 1px solid #f1f2f3;
+  //   width: 92%;
+  //   position: absolute;
+  //   z-index: 1;
+  //   bottom: 8px;
+  // }
   & > span {
     background: #fff;
     padding: 0 12px;
@@ -328,7 +330,7 @@ iframe.chatterbox-iframe.active {
   position: relative;
   background: #fff;
   color: #fff;
-  padding: 0 15px 0 20px;
+  padding: 2px 15px 0 20px;
   display: flex;
   height: 60px;
   align-items: center;
@@ -347,14 +349,24 @@ iframe.chatterbox-iframe.active {
 
   .header-title {
     flex: 1;
-    padding: 0 10px;
+    padding: 0 12px;
+    width: calc(100% - 60px);
+
+    & > div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     & .main {
-      font-size: 16px;
+      font-size: 15px;
+      font-weight: bold;
     }
     & .sub {
-      font-size: 12px;
+      font-size: 11px;
       color: #fff;
+      margin-top: 2px;
+      opacity: 0.8;
     }
   }
   .header-close {
@@ -373,6 +385,7 @@ iframe.chatterbox-iframe.active {
       top: 13px;
       right: 5px;
       border-radius: 2px;
+      opacity: 0.8;
     }
     &:before {
       transform: rotate(45deg);
@@ -383,7 +396,7 @@ iframe.chatterbox-iframe.active {
 
     &:hover:before,
     &:hover:after {
-      background-color: #eee;
+      opacity: 1;
     }
   }
 }
