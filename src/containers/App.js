@@ -78,8 +78,8 @@ const App = ({ info, addConfig, reConnect }) => {
     }, 100)
 
     const initIconConfig = () => {
-      const conf = isMobile ? info.iconConfig.mobile : info.iconConfig.pc
       const isMobile = script.mobileCheck()
+      const conf = isMobile ? info.iconConfig.mobile : info.iconConfig.pc    
       const icon = {
         background: info.iconConfig.themeColor
       }
@@ -113,6 +113,8 @@ const App = ({ info, addConfig, reConnect }) => {
           icon.right = parseInt(conf.axisX)
           break
       }
+
+      console.log('iconConfig', isMobile, icon, iconImageStyle)
 
       setIconStyle(icon)
       setIconImageStyle(iconImage)
