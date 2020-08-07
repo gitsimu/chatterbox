@@ -18,13 +18,16 @@ import '../css/style.scss'
 
 const App = ({ info, addConfig, reConnect }) => {
   const [iconActive, isIconActive] = React.useState(true)
-  const [themeColor, setThemeColor] = React.useState('#00aaff')
+  const [themeColor, setThemeColor] = React.useState('#0080F7')
   const [activate, isActivate] = React.useState(true)
   const [loading, isLoading] = React.useState(false)
   const [closed, isClosed] = React.useState(false)
   const [opened, isOpened] = React.useState(false)
   const [connected, isConnected] = React.useState(false)
   const [database, setDatabase] = React.useState(null)
+
+  const [iconStyle, setIconStyle] = React.useState(null)
+  const [iconImageStyle, setIconImageStyle] = React.useState(null)
 
   // let database
 
@@ -73,6 +76,48 @@ const App = ({ info, addConfig, reConnect }) => {
         iframe.contentDocument.head.appendChild(simmplelineLink)
       }
     }, 100)
+
+    const initIconConfig = () => {
+      const conf = isMobile ? info.iconConfig.mobile : info.iconConfig.pc
+      const isMobile = script.mobileCheck()
+      const icon = {
+        background: info.iconConfig.themeColor
+      }
+      const iconImage = {
+        width: parseInt(conf.size)
+      }
+
+      switch(info.iconConfig.position) {
+        case 'lt':
+          icon.top = parseInt(conf.axisY)
+          icon.bottom = 'auto'
+          icon.left = parseInt(conf.axisX)
+          icon.right = 'auto'
+          break
+        case 'rt':
+          icon.top = parseInt(conf.axisY)
+          icon.bottom = 'auto'
+          icon.left = 'auto'
+          icon.right = parseInt(conf.axisX)
+          break
+        case 'lb':
+          icon.top = 'auto'
+          icon.bottom = parseInt(conf.axisY)
+          icon.left = parseInt(conf.axisX)
+          icon.right = 'auto'
+          break
+        case 'rb':
+          icon.top = 'auto'
+          icon.bottom = parseInt(conf.axisY)
+          icon.left = 'auto'
+          icon.right = parseInt(conf.axisX)
+          break
+      }
+
+      setIconStyle(icon)
+      setIconImageStyle(iconImage)
+    }
+    initIconConfig()    
   }, [])
   
   React.useEffect(() => {
@@ -165,7 +210,7 @@ const App = ({ info, addConfig, reConnect }) => {
           {themeColor && (
             <div
               className={iconActive ? 'chat-icon active' : 'chat-icon'}
-              style={{backgroundColor: themeColor}}
+              style={iconStyle}
               onClick={() => {
                 // window.parent.postMessage({ method: 'open' }, '*')
                 const chatterbox = document.querySelector('iframe.chatterbox-iframe')
@@ -173,11 +218,11 @@ const App = ({ info, addConfig, reConnect }) => {
                 isIconActive(false)
                 isOpened(true)
               }}>
-
-              <img src={`${global.serverAddress()}/resources/icon01_256.png`} alt="chat-icon"/>
+              {/* <img src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/> */}
+              <img style={iconImageStyle} src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/>
             </div>
           )}
-          <Frame>
+          <Frame location={info.iconConfig.position}>
             <div className='chat-window'>
               <Header isIconActive={isIconActive}/>
                 {(opened && connected && info.config && Object.keys(info.config).length !== 0) ? (

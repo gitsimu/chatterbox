@@ -44,9 +44,28 @@ const IFrame = ({ children, ...props }) => {
     contentsRef.style.setProperty('border-radius', '20px', 'important')
     contentsRef.style.setProperty('box-shadow', '0px 5px 30px 0px rgba(0,0,0,0.1)', 'important')
     contentsRef.style.setProperty('position', 'fixed', 'important')
-    contentsRef.style.setProperty('bottom', '15px', 'important')
-    contentsRef.style.setProperty('right', '15px', 'important')
-    contentsRef.style.setProperty('z-index', '999999999', 'important')
+
+    contentsRef.style.setProperty('z-index', '9999999999', 'important')
+
+    switch(props.location) {
+      case 'lt':
+        contentsRef.style.setProperty('top', '15px', 'important')
+        contentsRef.style.setProperty('left', '15px', 'important')
+        break
+      case 'rt':
+        contentsRef.style.setProperty('top', '15px', 'important')
+        contentsRef.style.setProperty('right', '15px', 'important')
+        break
+      case 'lb':
+        contentsRef.style.setProperty('bottom', '15px', 'important')
+        contentsRef.style.setProperty('left', '15px', 'important')
+        break
+      case 'rb':
+      default:
+        contentsRef.style.setProperty('bottom', '15px', 'important')
+        contentsRef.style.setProperty('right', '15px', 'important')
+        break
+    }
   }
 
   return (

@@ -8,7 +8,8 @@ const initialState = {
   config: {},
   connected: false,
   isLoading: false,
-  themeColor: '#444C5E'
+  themeColor: '#444C5E',
+  iconConfig: {}
 }
 
 const info = (state = initialState, action) => {
@@ -24,7 +25,8 @@ const info = (state = initialState, action) => {
         ip: action.ip,
         svid: action.svid,
         connected: true,
-        isLoading: false
+        isLoading: false,
+        iconConfig: action.iconConfig
       }
     case 'RE_CONNECT':
       return {

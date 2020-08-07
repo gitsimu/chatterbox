@@ -15,12 +15,11 @@ div {
   position: fixed;
   right: 30px;
   bottom: 30px;
-  width: 60px;
-  height: 60px;
+  // width: 60px;
+  // height: 60px;
   background-color: #444c5d;
   border-radius: 50%;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -408,7 +407,7 @@ iframe.chatterbox-iframe.active {
     width: 120px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     height: 100%;
     font-size: 16px;
     & i {
