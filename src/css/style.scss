@@ -341,8 +341,8 @@ iframe.chatterbox-iframe.active {
     display: flex;
   }
   .header-image > img {
-    max-height: 30px;
-    max-width: 30px;
+    max-height: 35px;
+    max-width: 35px;
     border-radius: 5px;
     margin-right: 3px;
   }
@@ -505,12 +505,14 @@ iframe.chatterbox-iframe.active {
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    padding: 8px;
+    padding: 10px;
     background: #f1f1f1;
     color: #aeb3bf;
     text-align: center;
-    border-radius: 3px;
+    letter-spacing: 1px;
+    border-radius: 5px;
     user-select: none;
+    transition: 0.2s ease color;
   }
   & > div:hover {
     // background: #DFE5F1;
