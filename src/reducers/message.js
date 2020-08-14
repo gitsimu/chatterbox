@@ -1,5 +1,9 @@
 const message = (state = [], action) => {
   switch (action.type) {
+    case 'INIT_MESSAGE':
+      return [
+        ...action.message
+      ]
     case 'ADD_MESSAGE':
       return [
         ...state,
@@ -7,6 +11,11 @@ const message = (state = [], action) => {
       ]
     case 'CLEAR_MESSAGE':
       return []
+    case 'PAGING_MESSAGE':
+      return [
+        ...action.message,
+        ...state
+      ]
     default:
       return state
   }

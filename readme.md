@@ -14,3 +14,7 @@ https://stackoverflow.com/questions/217776/how-to-apply-css-to-iframe
 
 ## Javascript standard
 https://standardjs.com/rules-kokr.html
+
+## test key / svid
+- rndsmlch1
+- 1240

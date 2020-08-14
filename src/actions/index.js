@@ -13,6 +13,11 @@ export const addConfig = info => ({
   config: info.config
 })
 
+export const initMessage = message => ({
+  type: 'INIT_MESSAGE',
+  message
+})
+
 export const addMessage = message => ({
   type: 'ADD_MESSAGE',
   message
@@ -20,6 +25,11 @@ export const addMessage = message => ({
 
 export const clearMessage = () => ({
   type: 'CLEAR_MESSAGE'
+})
+
+export const pagingMessage = message => ({
+  type: 'PAGING_MESSAGE',
+  message
 })
 
 export const isLoading = l => ({

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { addMessage, clearMessage } from '../actions'
+import { initMessage, addMessage, clearMessage, pagingMessage } from '../actions'
 import ChatWindow from '../components/ChatWindow'
 
 const mapStateToProps = state => ({
@@ -8,8 +8,10 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+  initMessage: m => dispatch(initMessage(m)),
   addMessage: m => dispatch(addMessage(m)),
-  clearMessage: () => dispatch(clearMessage())
+  clearMessage: () => dispatch(clearMessage()),
+  pagingMessage: m => dispatch(pagingMessage(m))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatWindow)

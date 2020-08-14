@@ -65,6 +65,7 @@ const App = ({ info, addConfig, reConnect }) => {
       if (iframe) {
         let cssLink = document.createElement("link")
         cssLink.href = `${global.serverAddress()}/plugin/style.css`
+        // cssLink.href = "./style.css"
         cssLink.rel = "stylesheet"
         cssLink.type = "text/css"
         iframe.contentDocument.head.appendChild(cssLink)
@@ -229,7 +230,7 @@ const App = ({ info, addConfig, reConnect }) => {
               <Header isIconActive={isIconActive}/>
                 {(opened && connected && info.config && Object.keys(info.config).length !== 0) ? (
                   <>
-                    <VisibleChatWindow database={ database }/>
+                    <VisibleChatWindow database={ database } isLoading={ isLoading }/>
                     {closed ? (
                       <>
                         <div style={{backgroundColor: '#fff', height: 50}}></div>
