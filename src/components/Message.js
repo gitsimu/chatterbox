@@ -18,6 +18,17 @@ const Message = (props) => {
     }
   }
 
+  const skipTime = () => {
+    if (!props.next || props.next.userId !== props.userId) {
+      return false
+    }
+
+    const nextTime = script.timestampToTime(props.next.timestamp, true)
+    const curTime = script.timestampToTime(props.timestamp, true)
+
+    return (nextTime === curTime)
+  }
+
   let messageInner
   if (props.type === 1) {
     messageInner = <div className="message-inner">{ props.message }</div>
@@ -67,7 +78,9 @@ const Message = (props) => {
 
       { isMyself ? (
         <div className="message myself">
-          <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
+          { !skipTime() && (
+            <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
+          )}          
           { messageInner }
         </div>
       ) : (

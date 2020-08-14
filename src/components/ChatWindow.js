@@ -6,16 +6,9 @@ const PAGE_SIZE = 50
 let CHAT_REF
 
 const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagingMessage, database, isLoading }) => {  
+  const [page, setPage] = React.useState(1)
   const body = React.useRef(null)  
   
-  const scrollToBottom = () => {    
-    setTimeout(() => {
-      if (body && body.current) {
-        body.current.scrollTop = body.current.scrollHeight
-      }
-    }, 100)
-  }
-
   React.useEffect(() => {
     clearMessage()
     
@@ -45,7 +38,11 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
   
           initMessage(arr)
           
-          CHAT_REF = {ref: chatRef, page: 1, firstTimestamp: arr[0].timestamp}
+          CHAT_REF = {
+            ref: chatRef,            
+            firstTimestamp: arr[0].timestamp
+          }
+
           const lastMessage = arr[arr.length - 1]
           return lastMessage.timestamp 
         }
@@ -98,8 +95,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     
             pagingMessage(arr)
             CHAT_REF = {
-              ...CHAT_REF,
-              page: CHAT_REF.page + 1,
+              ...CHAT_REF,              
               firstTimestamp: arr.length === 0 ? 0 : arr[0].timestamp
             }
             return
@@ -115,13 +111,27 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     }
   }, [])
 
+  const scrollToBottom = () => {    
+    setTimeout(() => {
+      if (body && body.current) {
+        body.current.scrollTop = body.current.scrollHeight
+      }
+    }, 100)
+  }
+
   return (
     <div 
       className="chat-window-body"
       style={{backgroundColor: '#fff'}}
       ref={body}>
-      {message.length >= (CHAT_REF ? CHAT_REF.page : 1) * PAGE_SIZE && (
-        <div className="chat-more-message" onClick={() => {paging()}}>
+        
+      {message.length >= page * PAGE_SIZE && (
+        <div
+          className="chat-more-message"
+          onClick={() => {
+            paging()
+            setPage(p => p + 1)
+          }}>
           <div><i className="icon-arrow-up"></i>이전 메세지</div>
         </div>
       )}
@@ -130,6 +140,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
           info={info}
           key={m.id}
           prev={message[i - 1]}
+          next={message[i + 1]}
           {...m}
         />
       ))}
