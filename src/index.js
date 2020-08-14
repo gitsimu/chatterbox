@@ -12,11 +12,11 @@ import * as script from './js/script.js'
 
 const rootElement = document.getElementById ('chatterbox-root')
 const store = createStore(rootReducer)
-const key = rootElement.getAttribute('key') || 'rndsmlch1'
+const key = rootElement.getAttribute('key')
 const ck = rootElement.getAttribute('ck')
 const muid = rootElement.getAttribute('muid')
 const ip = rootElement.getAttribute('ip')
-const svid = rootElement.getAttribute('svid') || 1240
+const svid = rootElement.getAttribute('svid')
 
 const iconConfig = {
   themeColor: rootElement.getAttribute('themeColor') || '#0080F7',
