@@ -5,9 +5,9 @@ import * as script from '../js/script.js'
 const PAGE_SIZE = 50
 let CHAT_REF
 
-const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagingMessage, database, isLoading }) => {  
+const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagingMessage, database, isLoading }) => {
   const [page, setPage] = React.useState(1)
-  const body = React.useRef(null)  
+  const body = React.useRef(null)
   
   React.useEffect(() => {
     clearMessage()
@@ -27,7 +27,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
             timestamp: new Date().getTime(),
             type: 1,
             userId: info.key,
-          })          
+          })
           return 0
         } else {
           /* 대화내역 한 번에 호출 후 출력 */
@@ -39,7 +39,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
           initMessage(arr)
           
           CHAT_REF = {
-            ref: chatRef,            
+            ref: chatRef,
             firstTimestamp: arr[0].timestamp
           }
 
@@ -48,7 +48,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
         }
       })
       .then(lastTimestamp => {
-        const ref =  chatRef.startAt(lastTimestamp + 1)
+        const ref = chatRef.startAt(lastTimestamp + 1)
         ref.on('child_added', (snapshot) => {
           if (snapshot.key === 'userinfo'
           || snapshot.key === 'timestamp') return // ignore userinfo, timestamp
@@ -72,7 +72,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
       })
     }
 
-    return () => {      
+    return () => {
       chatRef.off()
     }
   }, [info.id])
@@ -82,8 +82,8 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
       isLoading(true)
 
       const chatRef = CHAT_REF.ref
-      const timestamp = CHAT_REF.firstTimestamp - 1      
-      let prevScrollHeight = body.current.scrollHeight      
+      const timestamp = CHAT_REF.firstTimestamp - 1
+      let prevScrollHeight = body.current.scrollHeight
 
       Promise.resolve()
         .then(() => {
@@ -95,7 +95,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     
             pagingMessage(arr)
             CHAT_REF = {
-              ...CHAT_REF,              
+              ...CHAT_REF,
               firstTimestamp: arr.length === 0 ? 0 : arr[0].timestamp
             }
             return
@@ -111,7 +111,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     }
   }, [])
 
-  const scrollToBottom = () => {    
+  const scrollToBottom = () => {
     setTimeout(() => {
       if (body && body.current) {
         body.current.scrollTop = body.current.scrollHeight

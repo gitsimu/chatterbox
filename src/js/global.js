@@ -4,4 +4,3 @@
 export const serverAddress = () => {
     return 'https://chat.smlog.co.kr'
 }
-  

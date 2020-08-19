@@ -11,7 +11,7 @@ const AddMessage = ({ database, dispatch, info }) => {
   const [sendingTerm, isSendingTerm] = React.useState(false)
   let form, input
 
-  React.useEffect(() => {    
+  React.useEffect(() => {
     if (input && selectedEmoji) {
       input.value = input.value + selectedEmoji.emoji
     }
@@ -124,6 +124,16 @@ const AddMessage = ({ database, dispatch, info }) => {
     showEmojiContainer(!emojiContainer)
   }
 
+  /* 메세지 발송 시 푸시 요청 */
+  const pushNotification = async () => {
+    const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }
+    const formData = new FormData()
+    formData.append('key', info.key)
+    formData.append('value', info.key)
+
+    return axios.post('https://smlog.co.kr', formData, config)
+  }
+
   return (
     <div className="bottom">
       <EmojiContainer
@@ -131,7 +141,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         setState={showEmojiContainer}
         selectEmoji={selectEmoji}/>
       <form ref={node => form = node} onSubmit={e => {
-        e.preventDefault()        
+        e.preventDefault()
         if (!input.value.trim()) return
 
         sendMessage(info.key, info.id, input.value, 1, database)

@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom'
 
 const IFrame = ({ children, ...props }) => {
   const [active, isActive] = useState(false)
-  const [contentsRef, setContentsRef] = useState(null)  
+  const [contentsRef, setContentsRef] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
-  const mountNode = contentsRef && contentsRef.contentWindow.document.body  
+  const mountNode = contentsRef && contentsRef.contentWindow.document.body
 
   React.useEffect(() => {
     window.addEventListener('message', function(e) {
@@ -70,17 +70,17 @@ const IFrame = ({ children, ...props }) => {
 
   return (
     <>
-    <iframe
-      {...props}
-      className={active ? 'chatterbox-iframe active' : 'chatterbox-iframe'}
-      ref={setContentsRef}>
-      {mountNode &&
-        createPortal(
-          React.Children.only(children),
-          mountNode
-        )}
-    </iframe>
-    { imagePreview }
+      <iframe
+        {...props}
+        className={active ? 'chatterbox-iframe active' : 'chatterbox-iframe'}
+        ref={setContentsRef}>
+        {mountNode &&
+          createPortal(
+            React.Children.only(children),
+            mountNode
+          )}
+      </iframe>
+      { imagePreview }
     </>
   )
 }

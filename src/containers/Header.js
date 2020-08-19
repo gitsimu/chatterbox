@@ -5,7 +5,7 @@ import '../css/style.scss'
 const Header = ({ info, isIconActive }) => {
   const config = info.config
   const themeColor = config.themeColor
-  
+  // info.iconConfig.themeColor
   return (
     <div className="header"
       style={{ backgroundColor: themeColor }}>

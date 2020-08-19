@@ -80,7 +80,7 @@ const Message = (props) => {
         <div className="message myself">
           { !skipTime() && (
             <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
-          )}          
+          )}
           { messageInner }
         </div>
       ) : (
