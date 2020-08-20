@@ -123,7 +123,7 @@ const App = ({ info, addConfig, reConnect }) => {
       })
       .then(() => {
         configRef = _database.ref(`/${info.key}/config`)
-        configRef.once('value', snapshot => {          
+        configRef.once('value', snapshot => {
           const data = snapshot.val()
           const initConfig = {
             title: '채팅 상담',
@@ -145,6 +145,7 @@ const App = ({ info, addConfig, reConnect }) => {
               themeColor: data.themeColor || initConfig.themeColor,
               email: data.email || initConfig.email,
               mobile: data.mobile || initConfig.mobile,
+              profileImage: data.profileImage || null
             }
           }
           else {

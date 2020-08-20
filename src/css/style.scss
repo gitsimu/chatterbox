@@ -207,6 +207,9 @@ iframe.chatterbox-iframe.active {
     height: 25px;
     border-radius: 5px;
   }
+  .message-body {
+    flex: 1;
+  }
 }
 .message.opponent {
   // align-items: flex-end;
@@ -226,6 +229,7 @@ iframe.chatterbox-iframe.active {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    padding: 0 3px;
   }
   .message-bottom {
     display: flex;
