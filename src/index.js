@@ -26,8 +26,8 @@ const iconConfig = {
     axisX: rootElement.getAttribute('pc-axisX') || 30,
     axisY: rootElement.getAttribute('pc-axisY') || 30,
     size: rootElement.getAttribute('pc-size') || 65,
-    text: '채팅 상담' || undefined,
-    textAlign: 'right'
+    text: rootElement.getAttribute('text'),
+    textAlign: rootElement.getAttribute('textAlign')
   },
   mobile: {
     hide: rootElement.getAttribute('mobile-hide') || false,

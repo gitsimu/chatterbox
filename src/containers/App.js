@@ -119,19 +119,6 @@ const App = ({ info, addConfig, reConnect }) => {
     Promise.resolve()
       .then(() => { isLoading(true)})
       .then(() => {
-        return getFirebaseAuthToken(info.id)
-          .then(({data}) => {
-            if (data.result !== 'success') throw new Error()
-            return data
-          })
-          .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
-      })
-      .then(data => {
-        console.log('token', data.token)
-        return firebase.auth().signInWithCustomToken(data.token)
-          .catch(() => { throw new Error('인증에 실패하였습니다.')})
-      })
-      .then(() => {
         configRef = _database.ref(`/${info.key}/config`)
         configRef.once('value', snapshot => {
           const data = snapshot.val()
@@ -179,6 +166,27 @@ const App = ({ info, addConfig, reConnect }) => {
 
         isConnected(true)
         setDatabase(_database)
+      })
+      /* 시간이 오래 소요되는 인증처리를 마지막에 수행한다 */
+      .then(() => {
+        return getFirebaseAuthToken(info.id)
+          .then(({data}) => {
+            if (data.result !== 'success') throw new Error()
+            return data
+          })
+          .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
+      })
+      .then(data => {
+        console.log('token', data.token)
+        return firebase.auth().signInWithCustomToken(data.token)
+          .catch(() => { throw new Error('인증에 실패하였습니다.')})
+      })
+      .then(() => {
+        // live check
+        _database.ref(`/${info.key}/users/${info.id}`).update({ live: 1 })        
+        window.onbeforeunload = () => {
+          _database.ref(`/${info.key}/users/${info.id}`).update({ live: 0 })
+        }
       })
       .catch((error) => error.messages && alert(error.messages))
       .finally(() => {        
