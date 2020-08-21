@@ -20,12 +20,14 @@ const svid = rootElement.getAttribute('svid')
 
 const iconConfig = {
   themeColor: rootElement.getAttribute('themeColor') || '#0080F7',
-  position: rootElement.getAttribute('position') || 'rb',
+  position: rootElement.getAttribute('position') || 'rb',  
   pc: {
     hide: rootElement.getAttribute('pc-hide') || false,
     axisX: rootElement.getAttribute('pc-axisX') || 30,
     axisY: rootElement.getAttribute('pc-axisY') || 30,
-    size: rootElement.getAttribute('pc-size') || 65
+    size: rootElement.getAttribute('pc-size') || 65,
+    text: '채팅 상담' || undefined,
+    textAlign: 'right'
   },
   mobile: {
     hide: rootElement.getAttribute('mobile-hide') || false,

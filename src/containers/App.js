@@ -28,6 +28,7 @@ const App = ({ info, addConfig, reConnect }) => {
 
   const [iconStyle, setIconStyle] = React.useState(null)
   const [iconImageStyle, setIconImageStyle] = React.useState(null)
+  const [iconText, setIconText] = React.useState(null)
   
   React.useEffect(() => {
     /* iframe에 Element를 추가할 때 Firefox에서 정상적으로 추가가 되지 않는데 setTimeout을 사용하여 해결
@@ -89,6 +90,15 @@ const App = ({ info, addConfig, reConnect }) => {
           break
       }
       // console.log('iconConfig', isMobile, icon, iconImageStyle)
+
+      if (conf.text) {
+        const textHtml = <div className="icon-text" style={conf.textAlign === 'right' ? {paddingRight: 20} : {paddingLeft: 20}}>{conf.text}</div>
+        if (conf.textAlign === 'right') {
+          icon.flexFlow = 'row-reverse'
+        }
+        setIconText(textHtml)
+      }
+      
 
       setIconStyle(icon)
       setIconImageStyle(iconImage)
@@ -196,7 +206,7 @@ const App = ({ info, addConfig, reConnect }) => {
                 isIconActive(false)
                 isOpened(true)
               }}>
-              {/* <img src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/> */}
+              {iconText && (iconText)}
               <img style={iconImageStyle} src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/>
             </div>
           )}

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 import EmojiContainer from '../components/EmojiContainer'
 import * as global from '../js/global.js'
+import * as script from '../js/script.js'
 import '../css/style.scss'
 
 const AddMessage = ({ database, dispatch, info }) => {
@@ -55,6 +56,14 @@ const AddMessage = ({ database, dispatch, info }) => {
         message: trimMessage,
         timestamp: new Date().getTime()
       })
+
+      pushNotification(lastMessage.slice(0, 28))
+        .then(data => {
+          console.log('push success', data)
+        })
+        .catch(err => {
+          console.log('push failed', err)
+        })
 
       // 메세지 발송 텀 0.3s
       setTimeout(() => {
@@ -125,13 +134,16 @@ const AddMessage = ({ database, dispatch, info }) => {
   }
 
   /* 메세지 발송 시 푸시 요청 */
-  const pushNotification = async () => {
+  const pushNotification = async (message) => {
+    const code = script.guestCodeGenerator(info.id)
     const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }
     const formData = new FormData()
-    formData.append('key', info.key)
-    formData.append('value', info.key)
+    formData.append('nick', code.guestCode)
+    formData.append('message', message)
+    formData.append('svid', info.svid)
+    formData.append('method', 'push_client_chat')
 
-    return axios.post('https://smlog.co.kr', formData, config)
+    return axios.post('https://smlog.co.kr/api/app_api.php', formData, config)
   }
 
   return (

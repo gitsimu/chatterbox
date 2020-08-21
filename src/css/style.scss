@@ -18,7 +18,7 @@ div {
   // width: 60px;
   // height: 60px;
   background-color: #444c5d;
-  border-radius: 50%;
+  border-radius: 100px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -47,6 +47,15 @@ div {
 
   & > img {
     width: 75px;
+  }
+
+  & > .icon-text {
+    font-size: 18px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 200px;
   }
 }
 
