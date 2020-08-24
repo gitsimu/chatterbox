@@ -41,6 +41,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         ip: info.ip,
         svid: info.svid,
         lastMessage: lastMessage,
+        live: 1,
         timestamp: new Date().getTime()
       })
       database.ref(`/${key}/messages/${id}/${messageId}`).update({

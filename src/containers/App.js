@@ -25,6 +25,7 @@ const App = ({ info, addConfig, reConnect }) => {
   const [opened, isOpened] = React.useState(false)
   const [connected, isConnected] = React.useState(false)
   const [database, setDatabase] = React.useState(null)
+  const [user, setUser] = React.useState(null)
 
   const [iconStyle, setIconStyle] = React.useState(null)
   const [iconImageStyle, setIconImageStyle] = React.useState(null)
@@ -157,13 +158,24 @@ const App = ({ info, addConfig, reConnect }) => {
           }
         })
       })
-      .then(() => {
+      .then(() => {        
         userRef = _database.ref(`/${info.key}/users/${info.id}`)
         userRef.on('value', snapshot => {
           const data = snapshot.val()
           isClosed(data && data.state === 2)
+          setUser(data)
+          
+          // Live connect
+          if (data && data.live !== 1) {
+            userRef.child('live').set(1)
+          }
         })
-
+        // Live disconnect
+        userRef.child('live').onDisconnect().set(0)
+        window.onbeforeunload = () => {
+          userRef.child('live').set(0)
+        }
+        
         isConnected(true)
         setDatabase(_database)
       })
@@ -180,14 +192,7 @@ const App = ({ info, addConfig, reConnect }) => {
         console.log('token', data.token)
         return firebase.auth().signInWithCustomToken(data.token)
           .catch(() => { throw new Error('인증에 실패하였습니다.')})
-      })
-      .then(() => {
-        // live check
-        _database.ref(`/${info.key}/users/${info.id}`).update({ live: 1 })        
-        window.onbeforeunload = () => {
-          _database.ref(`/${info.key}/users/${info.id}`).update({ live: 0 })
-        }
-      })
+      })      
       .catch((error) => error.messages && alert(error.messages))
       .finally(() => {        
         isLoading(false)
@@ -198,7 +203,7 @@ const App = ({ info, addConfig, reConnect }) => {
       userRef.off()
     }
   }, [info.id, opened])
- 
+
   return (
     <>
       {activate && (
