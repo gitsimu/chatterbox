@@ -33,30 +33,33 @@ const AddMessage = ({ database, dispatch, info }) => {
       } else {
         trimMessage = message.trim().substr(0, 20000)
         lastMessage = trimMessage
-      }
-      
-      database.ref(`/${key}/users/${id}`).update({
+      }    
+
+      const now = new Date().getTime()
+      const update = {}
+      update[`/${key}/users/${id}`] = {
         ck: info.ck,
         muid: info.muid,
         ip: info.ip,
         svid: info.svid,
         lastMessage: lastMessage,
         live: 1,
-        timestamp: new Date().getTime()
-      })
-      database.ref(`/${key}/messages/${id}/${messageId}`).update({
+        timestamp: now
+      }
+      update[`/${key}/messages/${id}/${messageId}`] = {
         id: messageId,
         userId: id,
         message: trimMessage,
         type: type,
-        timestamp: new Date().getTime()
-      })
-      database.ref(`/${key}/recents`).update({
+        timestamp: now
+      }
+      update[`/${key}/recents`] = {
         userId: id,
         type: type,
         message: trimMessage,
-        timestamp: new Date().getTime()
-      })
+        timestamp: now
+      }
+      database.ref().update(update)
 
       pushNotification(lastMessage.slice(0, 28))
         .then(data => {

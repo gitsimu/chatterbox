@@ -25,7 +25,7 @@ const App = ({ info, addConfig, reConnect }) => {
   const [opened, isOpened] = React.useState(false)
   const [connected, isConnected] = React.useState(false)
   const [database, setDatabase] = React.useState(null)
-  const [user, setUser] = React.useState(null)
+  // const [user, setUser] = React.useState(null)
 
   const [iconStyle, setIconStyle] = React.useState(null)
   const [iconImageStyle, setIconImageStyle] = React.useState(null)
@@ -58,7 +58,11 @@ const App = ({ info, addConfig, reConnect }) => {
       const isMobile = script.mobileCheck()
       const conf = isMobile ? info.iconConfig.mobile : info.iconConfig.pc
       const icon = {
-        background: info.iconConfig.themeColor
+        background: info.iconConfig.themeColor,
+        top: 'auto',
+        bottom: 'auto',
+        left: 'auto',
+        right: 'auto',
       }
       const iconImage = {
         width: parseInt(conf.size)
@@ -67,40 +71,31 @@ const App = ({ info, addConfig, reConnect }) => {
       switch(info.iconConfig.position) {
         case 'lt':
           icon.top = parseInt(conf.axisY)
-          icon.bottom = 'auto'
           icon.left = parseInt(conf.axisX)
-          icon.right = 'auto'
           break
         case 'rt':
           icon.top = parseInt(conf.axisY)
-          icon.bottom = 'auto'
-          icon.left = 'auto'
           icon.right = parseInt(conf.axisX)
           break
         case 'lb':
-          icon.top = 'auto'
           icon.bottom = parseInt(conf.axisY)
           icon.left = parseInt(conf.axisX)
-          icon.right = 'auto'
           break
-        case 'rb':
-          icon.top = 'auto'
+        case 'rb':        
           icon.bottom = parseInt(conf.axisY)
-          icon.left = 'auto'
           icon.right = parseInt(conf.axisX)
           break
-      }
-      // console.log('iconConfig', isMobile, icon, iconImageStyle)
+      }      
 
       if (conf.text) {
-        const textHtml = <div className="icon-text" style={conf.textAlign === 'right' ? {paddingRight: 20} : {paddingLeft: 20}}>{conf.text}</div>
+        const text = decodeURIComponent(conf.text)
+        const textHtml = <div className="icon-text" style={conf.textAlign === 'right' ? {paddingRight: 20} : {paddingLeft: 20}}>{text}</div>
         if (conf.textAlign === 'right') {
           icon.flexFlow = 'row-reverse'
         }
         setIconText(textHtml)
       }
       
-
       setIconStyle(icon)
       setIconImageStyle(iconImage)
     }
@@ -110,7 +105,7 @@ const App = ({ info, addConfig, reConnect }) => {
   React.useEffect(() => {
     if (!opened) return
 
-    console.info('[Smartlog] chat connected')
+    // console.info('[Smartlog] chat connected')
     !firebase.apps.length && firebase.initializeApp(FirebaseConfig)
     const _database = firebase.database()
 
@@ -118,7 +113,7 @@ const App = ({ info, addConfig, reConnect }) => {
     let userRef
 
     Promise.resolve()
-      .then(() => { isLoading(true)})
+      .then(() => { isLoading(true) })
       .then(() => {
         configRef = _database.ref(`/${info.key}/config`)
         configRef.once('value', snapshot => {
@@ -163,7 +158,7 @@ const App = ({ info, addConfig, reConnect }) => {
         userRef.on('value', snapshot => {
           const data = snapshot.val()
           isClosed(data && data.state === 2)
-          setUser(data)
+          // setUser(data)
           
           // Live connect
           if (data && data.live !== 1) {
@@ -189,7 +184,7 @@ const App = ({ info, addConfig, reConnect }) => {
           .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
       })
       .then(data => {
-        console.log('token', data.token)
+        // console.log('token', data.token)
         return firebase.auth().signInWithCustomToken(data.token)
           .catch(() => { throw new Error('인증에 실패하였습니다.')})
       })      
