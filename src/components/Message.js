@@ -6,7 +6,7 @@ const Message = (props) => {
   const isMyself = props.info.id === props.userId
   const isSameUser = (props.prev && (props.prev.userId === props.userId))
   const config = props.info.config
-  const nickname = config.nickname || 'Opponent'
+  const nickname = config.nickname || 'Manager'
 
   const skipDate = () => {
     if (!props.prev) return false
@@ -68,15 +68,14 @@ const Message = (props) => {
   }
 
   return (
-    <>
+    <>      
       { !skipDate() && (
+        // 날짜 표시 yyyy.mm.dd
         <div className="message-date"><span>{script.timestampToDay(props.timestamp)}</span></div>
       )}
-      { (!isSameUser || !skipDate()) && (
-        <div className="margin-top-15"></div>
-      )}
-
-      { isMyself ? (
+            
+      { isMyself ? (       
+        // 방문자 메세지 
         <div className="message myself">
           { !skipTime() && (
             <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
@@ -84,6 +83,7 @@ const Message = (props) => {
           { messageInner }
         </div>
       ) : (
+        // 관리자 메세지
         <div className="message opponent">
           <div className="message-profile">
             { (!isSameUser || !skipDate()) && (
@@ -93,7 +93,7 @@ const Message = (props) => {
                   <img src={ JSON.parse(config.profileImage).location }/>
                 </div>
               ) : (
-                <div className="message-profile-icon">{ nickname.substring(0, 1) }</div>
+                <div className="message-profile-icon" style={{backgroundColor: config.themeColor}}>{ nickname.substring(0, 1) }</div>
               )}
               </>
             )}
@@ -106,7 +106,9 @@ const Message = (props) => {
             )}
             <div className="message-bottom">
               { messageInner }
-              <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
+              { !skipTime() && (
+                <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
+              )}              
             </div>
           </div>
         </div>

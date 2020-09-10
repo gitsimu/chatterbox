@@ -73,7 +73,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     }
 
     return () => {
-      chatRef.off()
+      chatRef && chatRef.off()
     }
   }, [info.id])
 
@@ -145,7 +145,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
         />
       ))}
 
-      { false && (
+      {/* { false && (
         <div
           className="chat-required-data">
           <div>
@@ -161,7 +161,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
             <input/>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

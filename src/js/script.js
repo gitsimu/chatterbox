@@ -28,14 +28,16 @@ export const bytesToSize = (bytes) => {
 }
 
 export const timestampToDay = (timestamp, addMonth=0, addDays=0) => {
+  // const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
   const date = new Date(timestamp);
   let year = date.getFullYear(),
       month = date.getMonth()+1 + addMonth,
       day = date.getDate() + addDays;
+      //weekday = weekdays[date.getDay()]
 
   month = month < 10 ? '0' + month : month;
   day = day < 10 ? '0' + day : day;
-  return year + '.' + month + '.' + day;
+  return `${year}.${month}.${day}`;
 }
 
 export const timestampToTime = (timestamp, isSimple) => {

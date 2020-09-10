@@ -22,8 +22,7 @@ const AddMessage = ({ database, dispatch, info }) => {
     if (!sendingTerm) {
       isSendingTerm(true)
 
-      const messageId = Math.random().toString(36).substr(2, 9)
-      // const lastMessage = (type === 2) ? JSON.parse(message).name : message.trim()
+      const messageId = Math.random().toString(36).substr(2, 9)      
       let trimMessage
       let lastMessage
   
@@ -77,13 +76,13 @@ const AddMessage = ({ database, dispatch, info }) => {
     const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
     const ALLOW_FILE_EXTENSIONS = [
       'jpg', 'jpeg', 'gif', 'bmp', 'png', 'tif', 'tiff', 'tga', 'psd', 'ai', // 이미지
-      'mp4', 'm4v', 'avi', 'asf', 'wmv', 'mkv', 'ts', 'mpg', 'mpeg', 'mov',
-      'flv', 'ogv', // 동영상
+      'mp4', 'm4v', 'avi', 'asf', 'wmv', 'mkv', 'ts', 'mpg', 'mpeg', 'mov', 'flv', 'ogv', // 동영상
       'mp3', 'wav', 'flac', 'tta', 'tak', 'aac', 'wma', 'ogg', 'm4a', // 음성
       'doc', 'docx', 'hwp', 'txt', 'rtf', 'xml', 'pdf', 'wks', 'wps', 'xps',
       'md', 'odf', 'odt', 'ods', 'odp', 'csv', 'tsv', 'xls', 'xlsx', 'ppt',
       'pptx', 'pages', 'key', 'numbers', 'show', 'ce', // 문서
-      'zip', 'gz', 'bz2', 'rar', '7z', 'lzh', 'alz']
+      'zip', 'gz', 'bz2', 'rar', '7z', 'lzh', 'alz' // 압축
+    ]
 
     const fileSize = target.size
     const fileExtension = target.name.split('.').pop().toLowerCase()

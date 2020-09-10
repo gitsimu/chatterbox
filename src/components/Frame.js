@@ -9,8 +9,7 @@ const IFrame = ({ children, ...props }) => {
 
   React.useEffect(() => {
     window.addEventListener('message', function(e) {
-      if (!e.data.method) return
-      // console.log(e.data)
+      if (!e.data.method) return      
 
       switch (e.data.method) {
         case 'open':
@@ -34,6 +33,8 @@ const IFrame = ({ children, ...props }) => {
           break
       }
     })
+    
+    // console.log(e.data)
     // console.log('iframe ref', contentsRef)
   }, [])
 
@@ -44,7 +45,6 @@ const IFrame = ({ children, ...props }) => {
     contentsRef.style.setProperty('border-radius', '20px', 'important')
     contentsRef.style.setProperty('box-shadow', '0px 5px 30px 0px rgba(0,0,0,0.1)', 'important')
     contentsRef.style.setProperty('position', 'fixed', 'important')
-
     contentsRef.style.setProperty('z-index', '9999999999', 'important')
 
     switch(props.location) {

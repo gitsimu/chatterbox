@@ -17,8 +17,7 @@ import * as script from '../js/script.js'
 import '../css/style.scss'
 
 const App = ({ info, addConfig, reConnect }) => {
-  const [iconActive, isIconActive] = React.useState(true)
-  const [themeColor, setThemeColor] = React.useState('#0080F7')
+  const [iconActive, isIconActive] = React.useState(true)  
   const [activate, isActivate] = React.useState(true)
   const [loading, isLoading] = React.useState(false)
   const [closed, isClosed] = React.useState(false)
@@ -58,7 +57,11 @@ const App = ({ info, addConfig, reConnect }) => {
       const isMobile = script.mobileCheck()
       const conf = isMobile ? info.iconConfig.mobile : info.iconConfig.pc
       const icon = {
-        background: info.iconConfig.themeColor
+        background: info.iconConfig.themeColor,
+        top: 'auto',
+        bottom: 'auto',
+        left: 'auto',
+        right: 'auto'
       }
       const iconImage = {
         width: parseInt(conf.size)
@@ -66,41 +69,33 @@ const App = ({ info, addConfig, reConnect }) => {
 
       switch(info.iconConfig.position) {
         case 'lt':
-          icon.top = parseInt(conf.axisY)
-          icon.bottom = 'auto'
-          icon.left = parseInt(conf.axisX)
-          icon.right = 'auto'
+          icon.top = parseInt(conf.axisY)          
+          icon.left = parseInt(conf.axisX)          
           break
         case 'rt':
-          icon.top = parseInt(conf.axisY)
-          icon.bottom = 'auto'
-          icon.left = 'auto'
+          icon.top = parseInt(conf.axisY)          
           icon.right = parseInt(conf.axisX)
           break
-        case 'lb':
-          icon.top = 'auto'
+        case 'lb':          
           icon.bottom = parseInt(conf.axisY)
-          icon.left = parseInt(conf.axisX)
-          icon.right = 'auto'
+          icon.left = parseInt(conf.axisX)          
           break
-        case 'rb':
-          icon.top = 'auto'
-          icon.bottom = parseInt(conf.axisY)
-          icon.left = 'auto'
+        case 'rb':          
+          icon.bottom = parseInt(conf.axisY)          
           icon.right = parseInt(conf.axisX)
           break
       }
       // console.log('iconConfig', isMobile, icon, iconImageStyle)
 
       if (conf.text) {
-        const textHtml = <div className="icon-text" style={conf.textAlign === 'right' ? {paddingRight: 20} : {paddingLeft: 20}}>{conf.text}</div>
+        const text = decodeURIComponent(conf.text)
+        const textHtml = <div className="chat-icon-text" style={conf.textAlign === 'right' ? {paddingRight: 20} : {paddingLeft: 20}}>{text}</div>
         if (conf.textAlign === 'right') {
           icon.flexFlow = 'row-reverse'
         }
         setIconText(textHtml)
       }
       
-
       setIconStyle(icon)
       setIconImageStyle(iconImage)
     }
@@ -114,13 +109,12 @@ const App = ({ info, addConfig, reConnect }) => {
     !firebase.apps.length && firebase.initializeApp(FirebaseConfig)
     const _database = firebase.database()
 
-    let configRef
-    let userRef
+    const configRef = _database.ref(`/${info.key}/config`)
+    const userRef = _database.ref(`/${info.key}/users/${info.id}`)
 
     Promise.resolve()
       .then(() => { isLoading(true)})
-      .then(() => {
-        configRef = _database.ref(`/${info.key}/config`)
+      .then(() => {        
         configRef.once('value', snapshot => {
           const data = snapshot.val()
           const initConfig = {
@@ -150,16 +144,14 @@ const App = ({ info, addConfig, reConnect }) => {
             config = initConfig
           }
 
-          addConfig({config: config})
-          setThemeColor(config.themeColor)
+          addConfig({config: config})          
 
           if (data && data.workingDay) {
             isActivate(script.checkWorkingTime(data.workingDay))
           }
         })
       })
-      .then(() => {        
-        userRef = _database.ref(`/${info.key}/users/${info.id}`)
+      .then(() => {                
         userRef.on('value', snapshot => {
           const data = snapshot.val()
           isClosed(data && data.state === 2)
@@ -171,7 +163,7 @@ const App = ({ info, addConfig, reConnect }) => {
           }
         })
         // Live disconnect
-        userRef.child('live').onDisconnect().set(0)
+        userRef.onDisconnect().update({live: 0})
         window.onbeforeunload = () => {
           userRef.child('live').set(0)
         }
@@ -188,8 +180,7 @@ const App = ({ info, addConfig, reConnect }) => {
           })
           .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
       })
-      .then(data => {
-        console.log('token', data.token)
+      .then(data => {        
         return firebase.auth().signInWithCustomToken(data.token)
           .catch(() => { throw new Error('인증에 실패하였습니다.')})
       })      
@@ -208,21 +199,19 @@ const App = ({ info, addConfig, reConnect }) => {
     <>
       {activate && (
         <>
-          {themeColor && (
-            <div
-              className={iconActive ? 'chat-icon active' : 'chat-icon'}
-              style={iconStyle}
-              onClick={() => {
-                // window.parent.postMessage({ method: 'open' }, '*')
-                const chatterbox = document.querySelector('iframe.chatterbox-iframe')
-                chatterbox.contentWindow.parent.postMessage({ method: 'open' }, '*')
-                isIconActive(false)
-                isOpened(true)
-              }}>
-              {iconText && (iconText)}
-              <img style={iconImageStyle} src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/>
-            </div>
-          )}
+          <div
+            className={iconActive ? 'chat-icon active' : 'chat-icon'}
+            style={iconStyle}
+            onClick={() => {
+              // window.parent.postMessage({ method: 'open' }, '*')
+              const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+              chatterbox.contentWindow.parent.postMessage({ method: 'open' }, '*')
+              isIconActive(false)
+              isOpened(true)
+            }}>
+            {iconText && (iconText)}
+            <img style={iconImageStyle} src={`${global.serverAddress()}/resources/icon_bubble_256.png`} alt="chat-icon"/>
+          </div>
           <Frame location={info.iconConfig.position}>
             <div className='chat-window'>
               <Header isIconActive={isIconActive}/>

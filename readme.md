@@ -16,5 +16,5 @@ https://stackoverflow.com/questions/217776/how-to-apply-css-to-iframe
 https://standardjs.com/rules-kokr.html
 
 ## test key / svid
-- rndsmlch1
-- 1240
+- rndsmlch1, xwhniu9mf
+- 1240, 1234

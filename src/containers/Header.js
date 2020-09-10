@@ -5,7 +5,7 @@ import '../css/style.scss'
 const Header = ({ info, isIconActive }) => {
   const config = info.config
   const themeColor = config.themeColor
-  // info.iconConfig.themeColor
+  
   return (
     <div className="header"
       style={{ backgroundColor: themeColor }}>
@@ -23,8 +23,7 @@ const Header = ({ info, isIconActive }) => {
         )}
       </div>
       <div className="header-close"
-        onClick={() => {
-          // window.parent.postMessage({ method: 'close' }, '*')
+        onClick={() => {          
           const chatterbox = document.querySelector('iframe.chatterbox-iframe')
           chatterbox.contentWindow.parent.postMessage({ method: 'close' }, '*')
           isIconActive(true)

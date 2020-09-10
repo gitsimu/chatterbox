@@ -9,8 +9,7 @@ const EmojiConatiner = (props) => {
   const emojiGestures = '👋,✋,👌,✌,👈,👉,👆,👇,👍,👎,✊,👊,👏,🙌,👐,🙏,✍️,💅,💪,👂,👃,👀,👅,👄,💋'
 
   return (
-<div className={(props.getState === true) ? 'emoji-container active' : 'emoji-container'}>
-      {/* <div className="emoji-title">Smileys</div> */}
+    <div className={(props.getState === true) ? 'emoji-container active' : 'emoji-container'}>      
       { emojiSmileys && emojiSmileys.split(',').map((m, i) => (
         <div
           key={i}
@@ -21,8 +20,7 @@ const EmojiConatiner = (props) => {
           }}>
           {m}
         </div>
-      )) }
-      {/* <div className="emoji-title">Gestures and Body Parts</div> */}
+      )) }      
       { emojiGestures && emojiGestures.split(',').map((m, i) => (
         <div
           key={i}
