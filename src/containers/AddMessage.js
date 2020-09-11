@@ -4,6 +4,7 @@ import axios from 'axios'
 import EmojiContainer from '../components/EmojiContainer'
 import * as global from '../js/global.js'
 import * as script from '../js/script.js'
+import * as firebase from "firebase/app"
 import '../css/style.scss'
 
 const AddMessage = ({ database, dispatch, info }) => {
@@ -22,7 +23,8 @@ const AddMessage = ({ database, dispatch, info }) => {
     if (!sendingTerm) {
       isSendingTerm(true)
 
-      const messageId = Math.random().toString(36).substr(2, 9)      
+      const timestamp = firebase.database.ServerValue.TIMESTAMP
+      const messageId = Math.random().toString(36).substr(2, 9)
       let trimMessage
       let lastMessage
   
@@ -33,7 +35,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         trimMessage = message.trim().substr(0, 20000)
         lastMessage = trimMessage
       }
-      
+
       database.ref(`/${key}/users/${id}`).update({
         ck: info.ck,
         muid: info.muid,
@@ -41,21 +43,21 @@ const AddMessage = ({ database, dispatch, info }) => {
         svid: info.svid,
         lastMessage: lastMessage,
         live: 1,
-        timestamp: new Date().getTime()
+        timestamp: timestamp
       })
       database.ref(`/${key}/messages/${id}/${messageId}`).update({
         id: messageId,
         userId: id,
         message: trimMessage,
         type: type,
-        timestamp: new Date().getTime()
+        timestamp: timestamp
       })
       database.ref(`/${key}/recents`).update({
         userId: id,
         type: type,
         message: trimMessage,
-        timestamp: new Date().getTime()
-      })
+        timestamp: timestamp
+      })      
 
       pushNotification(lastMessage.slice(0, 28))
         .then(data => {

@@ -1,5 +1,6 @@
 import React from 'react'
 import Message from './Message'
+import * as firebase from "firebase/app"
 import * as script from '../js/script.js'
 
 const PAGE_SIZE = 50
@@ -13,6 +14,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
     clearMessage()
     
     const chatRef = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
+    const timestamp = firebase.database.ServerValue.TIMESTAMP
 
     Promise.resolve()
       .then(() => {
@@ -24,7 +26,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
           addMessage({
             id: "first",
             message: info.config.firstMessage,
-            timestamp: new Date().getTime(),
+            timestamp: timestamp,
             type: 1,
             userId: info.key,
           })
@@ -66,7 +68,7 @@ const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagi
       addMessage({
         id: "missed",
         message: info.config.workingDay.message,
-        timestamp: new Date().getTime(),
+        timestamp: timestamp,
         type: 1,
         userId: info.key,
       })
