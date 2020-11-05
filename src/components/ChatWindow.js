@@ -64,7 +64,7 @@ const ChatWindow = ({info, message, initMessage, addMessage, pagingMessage, data
   }, [info.id])
 
   const onMessageListner = () => {
-    onMessageAdded(chatStartTime.current)
+    onMessageAdded(chatStartTime.current + 1)
       .on(addedMessage => {
         setScrollBottom()
         addMessage(addedMessage)
