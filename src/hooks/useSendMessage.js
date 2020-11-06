@@ -22,6 +22,16 @@ const useSendMessage = (database) => {
       lastMessage = trimMessage
     }
 
+    const customData = {}
+    if (info.customData) {
+      Object.keys(info.customData).map((key) => {
+        const data = info.customData[key]
+        if (data && data !== '') {
+          customData[key] = data
+        }          
+      })
+    }
+
     database.ref(`/${info.key}/users/${info.id}`).update({
       ck: info.ck,
       muid: info.muid,
@@ -29,7 +39,8 @@ const useSendMessage = (database) => {
       svid: info.svid,
       lastMessage: lastMessage,
       live: 1,
-      timestamp: timestamp
+      timestamp: timestamp,
+      ...customData
     })
     database.ref(`/${info.key}/messages/${info.id}/${messageId}`).update({
       id: messageId,
