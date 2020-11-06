@@ -1,16 +1,16 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import axios from 'axios'
 import EmojiContainer from '../components/EmojiContainer'
 import * as global from '../js/global.js'
-import * as script from '../js/script.js'
-import * as firebase from "firebase/app"
 import '../css/style.scss'
+import useSendMessage from '../hooks/useSendMessage'
 
-const AddMessage = ({ database, dispatch, info }) => {
+const AddMessage = ({database, dispatch, info}) => {
   const [emojiContainer, showEmojiContainer] = React.useState(false)
   const [selectedEmoji, selectEmoji] = React.useState(null)
-  const [sendingTerm, isSendingTerm] = React.useState(false)
+  const [sendMessage] = useSendMessage(database)
+
   let form, input
 
   React.useEffect(() => {
@@ -18,61 +18,6 @@ const AddMessage = ({ database, dispatch, info }) => {
       input.value = input.value + selectedEmoji.emoji
     }
   }, [selectedEmoji])
-
-  const sendMessage = (key, id, message, type, database) => {
-    if (!sendingTerm) {
-      isSendingTerm(true)
-
-      const timestamp = firebase.database.ServerValue.TIMESTAMP
-      const messageId = Math.random().toString(36).substr(2, 9)
-      let trimMessage
-      let lastMessage
-  
-      if (type === 2) {
-        trimMessage = message.trim()
-        lastMessage = JSON.parse(message).name
-      } else {
-        trimMessage = message.trim().substr(0, 20000)
-        lastMessage = trimMessage
-      }
-
-      database.ref(`/${key}/users/${id}`).update({
-        ck: info.ck,
-        muid: info.muid,
-        ip: info.ip,
-        svid: info.svid,
-        lastMessage: lastMessage,
-        live: 1,
-        timestamp: timestamp
-      })
-      database.ref(`/${key}/messages/${id}/${messageId}`).update({
-        id: messageId,
-        userId: id,
-        message: trimMessage,
-        type: type,
-        timestamp: timestamp
-      })
-      database.ref(`/${key}/recents`).update({
-        userId: id,
-        type: type,
-        message: trimMessage,
-        timestamp: timestamp
-      })      
-
-      pushNotification(lastMessage.slice(0, 28))
-        .then(data => {
-          console.log('push success', data)
-        })
-        .catch(err => {
-          console.log('push failed', err)
-        })
-
-      // 메세지 발송 텀 0.3s
-      setTimeout(() => {
-        isSendingTerm(false)
-      }, 300)
-    }
-  }
 
   const checkFile = React.useCallback((target) => {
     const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
@@ -106,25 +51,25 @@ const AddMessage = ({ database, dispatch, info }) => {
     const target = e.target.files[0]
     if (!checkFile(target)) return
 
-    const config = { headers: { 'content-type': 'multipart/form-data' } }
+    const config = {headers: {'content-type': 'multipart/form-data'}}
     const formData = new FormData()
     formData.append('file', target)
     formData.append('key', info.key)
 
-    dispatch({ type: 'LOADING', isLoading: true })
+    dispatch({type: 'LOADING', isLoading: true})
 
     return axios.post(`${global.serverAddress()}/api/upload`, formData, config)
-      .then(res => {
-        if (res.data.result === 'success') {
-          sendMessage(info.key, info.id, JSON.stringify(res.data.file), 2, database)
-        }
-      })
-      .catch(err => {
-        if (err) throw err
-      })
-      .finally(() => {
-        dispatch({ type: 'LOADING', isLoading: false })
-      })
+                .then(res => {
+                  if (res.data.result === 'success') {
+                    sendMessage(JSON.stringify(res.data.file), 2)
+                  }
+                })
+                .catch(err => {
+                  if (err) throw err
+                })
+                .finally(() => {
+                  dispatch({type: 'LOADING', isLoading: false})
+                })
   }
 
   const handleFileInputClear = (e) => {
@@ -133,19 +78,6 @@ const AddMessage = ({ database, dispatch, info }) => {
 
   const handleEmojiContainer = () => {
     showEmojiContainer(!emojiContainer)
-  }
-
-  /* 메세지 발송 시 푸시 요청 */
-  const pushNotification = async (message) => {
-    const code = script.guestCodeGenerator(info.id)
-    const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }
-    const formData = new FormData()
-    formData.append('nick', code.guestCode)
-    formData.append('message', message)
-    formData.append('svid', info.svid)
-    formData.append('method', 'push_client_chat')
-
-    return axios.post('https://smlog.co.kr/api/app_api.php', formData, config)
   }
 
   return (
@@ -158,7 +90,7 @@ const AddMessage = ({ database, dispatch, info }) => {
         e.preventDefault()
         if (!input.value.trim()) return
 
-        sendMessage(info.key, info.id, input.value, 1, database)
+        sendMessage(input.value, 1)
         showEmojiContainer(false)
         input.value = ''
       }}>
@@ -168,24 +100,24 @@ const AddMessage = ({ database, dispatch, info }) => {
             <input type="file" onChange={e => handleFileInput(e)} onClick={e => handleFileInputClear(e)}/>
           </label>
           <i className="icon-emotsmile"
-            onClick={e => handleEmojiContainer(e)}></i>
+             onClick={e => handleEmojiContainer(e)}></i>
         </div>
-        <textarea className="message-input" 
-          ref={node => input = node} 
-          placeholder="메세지를 입력해주세요."
-          onKeyPress={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              let submitEvent
-              if(typeof(Event) === 'function') { 
-                submitEvent = new Event('submit') 
-              } else {
-                submitEvent = document.createEvent('Event');
-                submitEvent.initEvent('submit', true, true);
-              }
-              form.dispatchEvent(submitEvent)
-            }
-          }}/>
+        <textarea className="message-input"
+                  ref={node => input = node}
+                  placeholder="메세지를 입력해주세요."
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      let submitEvent
+                      if (typeof (Event) === 'function') {
+                        submitEvent = new Event('submit')
+                      } else {
+                        submitEvent = document.createEvent('Event')
+                        submitEvent.initEvent('submit', true, true)
+                      }
+                      form.dispatchEvent(submitEvent)
+                    }
+                  }}/>
         <button className="message-button-send" type="submit">
           <i className="icon-paper-plane" aria-hidden="true"></i>
         </button>
@@ -196,7 +128,7 @@ const AddMessage = ({ database, dispatch, info }) => {
 
 const mapStateToProps = state => ({
   info: state.info,
-  message: state.message,
+  message: state.message
 })
 
 export default connect(mapStateToProps)(AddMessage)

@@ -1,146 +1,99 @@
 import React from 'react'
 import Message from './Message'
 import * as script from '../js/script.js'
+import useMessageGetter from '../hooks/useMessageGetter'
+import useScrollTo from '../hooks/useScrollTo'
 
 const PAGE_SIZE = 50
-let CHAT_REF
-
-const ChatWindow = ({ info, message, initMessage, addMessage, clearMessage, pagingMessage, database, isLoading }) => {
-  const [page, setPage] = React.useState(1)
+const ChatWindow = ({info, message, initMessage, addMessage, pagingMessage, database, isLoading}) => {
   const body = React.useRef(null)
-  
+  const [page, setPage] = React.useState(0)
+  const chatStartTime = React.useRef(new Date().getTime())
+  const [hasBeforePage, setHasBeforePage] = React.useState(false)
+
+  const [getMessageList, onMessageAdded] = useMessageGetter(database, chatStartTime.current)
+  const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message])
+
   React.useEffect(() => {
-    clearMessage()
-    
-    const chatRef = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')    
+    if (page === 0) return
 
+    (page === 1 ? setScrollBottom : setScrollFix)()
+
+    const lastTimestamp = page === 1
+      ? chatStartTime.current
+      : message[0].timestamp - 1
+
+    isLoading(true)
     Promise.resolve()
-      .then(() => {
-        return chatRef.limitToLast(PAGE_SIZE * 1).once('value')
-      })
-      .then(snapshots => {
-        if (snapshots.val() === null) {
-          /* 대화내역 없음 */
-          addMessage({
-            id: "first",
-            message: info.config.firstMessage,
-            timestamp: new Date().getTime(),
-            type: 1,
-            userId: info.key,
-          })
-          return 0
-        } else {
-          /* 대화내역 한 번에 호출 후 출력 */
-          const arr = []
-          snapshots.forEach(snapshot => {
-            arr.push(snapshot.val())
-          })
-  
-          initMessage(arr)
-          
-          CHAT_REF = {
-            ref: chatRef,
-            firstTimestamp: arr[0].timestamp
-          }
+           .then(() => getMessageList(PAGE_SIZE, lastTimestamp))
+           .then(addedMessageList => {
+             if (addedMessageList.length === 0) {
+               /* 대화내용 없음 */
+               addedMessageList.push({
+                 id: 'first',
+                 message: info.config.firstMessage,
+                 timestamp: chatStartTime.current,
+                 type: 1,
+                 userId: info.key
+               })
+             }
 
-          const lastMessage = arr[arr.length - 1]
-          return lastMessage.timestamp 
-        }
-      })
-      .then(lastTimestamp => {
-        const ref = chatRef.startAt(lastTimestamp + 1)
-        ref.on('child_added', (snapshot) => {
-          if (snapshot.key === 'userinfo'
-          || snapshot.key === 'timestamp') return // ignore userinfo, timestamp
-   
-          const m = snapshot.val()
-          addMessage(m)
-          scrollToBottom()
-        })
-      })
-      .finally(() => {
-        scrollToBottom()
-      })
-    
+             setHasBeforePage(addedMessageList.length === PAGE_SIZE)
+             pagingMessage(addedMessageList)
+           })
+           .finally(() => {
+             isLoading(false)
+           })
+  }, [info.id, page])
+
+  React.useEffect(() => {
     if (!script.checkWorkingTime(info.config.workingDay)) {
-      addMessage({
-        id: "missed",
+      initMessage([{
+        id: 'missed',
         message: info.config.workingDay.message,
-        timestamp: new Date().getTime(),
+        timestamp: chatStartTime.current,
         type: 1,
-        userId: info.key,
-      })
+        userId: info.key
+      }])
+
+      return
     }
 
-    return () => {
-      chatRef && chatRef.off()
-    }
+    setPage(1)
+    onMessageListner()
   }, [info.id])
 
-  const paging = React.useCallback(() => {
-    if (CHAT_REF && CHAT_REF.ref) {
-      isLoading(true)
-
-      const chatRef = CHAT_REF.ref
-      const timestamp = CHAT_REF.firstTimestamp - 1
-      let prevScrollHeight = body.current.scrollHeight
-
-      Promise.resolve()
-        .then(() => {
-          chatRef.limitToLast(PAGE_SIZE).endAt(timestamp).once('value', snapshots => {
-            const arr = []
-            snapshots.forEach(snapshot => {
-              arr.push(snapshot.val())
-            })
-    
-            pagingMessage(arr)
-            CHAT_REF = {
-              ...CHAT_REF,
-              firstTimestamp: arr.length === 0 ? 0 : arr[0].timestamp
-            }
-            return
-          })
-        })
-        .then(() => {
-          setTimeout(() => {
-            const currentScrollHeight = body.current.scrollHeight
-            body.current.scrollTop = currentScrollHeight - prevScrollHeight
-            isLoading(false)
-          }, 300)
-        })
-    }
-  }, [])
-
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      if (body && body.current) {
-        body.current.scrollTop = body.current.scrollHeight
-      }
-    }, 100)
+  const onMessageListner = () => {
+    onMessageAdded(chatStartTime.current + 1)
+      .on(addedMessage => {
+        setScrollBottom()
+        addMessage(addedMessage)
+      })
   }
 
   return (
-    <div 
+    <div
       className="chat-window-body"
       style={{backgroundColor: '#fff'}}
       ref={body}>
-        
-      {message.length >= page * PAGE_SIZE && (
+
+      {hasBeforePage && (
         <div
           className="chat-more-message"
           onClick={() => {
-            paging()
             setPage(p => p + 1)
           }}>
-          <div><i className="icon-arrow-up"></i>이전 메세지</div>
+          <div><i className="icon-arrow-up"/>이전 메세지</div>
         </div>
       )}
+
       {message.map((m, i) => (
         <Message
           info={info}
           key={m.id}
           prev={message[i - 1]}
           next={message[i + 1]}
+          onLoadImage={scrollTo}
           {...m}
         />
       ))}

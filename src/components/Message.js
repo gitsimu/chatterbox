@@ -10,12 +10,11 @@ const Message = (props) => {
 
   const skipDate = () => {
     if (!props.prev) return false
-    else {
-      const prevDate = script.timestampToDay(props.prev.timestamp)
-      const curDate = script.timestampToDay(props.timestamp)
 
-      return (prevDate === curDate)
-    }
+    const prevDate = script.timestampToDay(props.prev.timestamp)
+    const curDate = script.timestampToDay(props.timestamp)
+
+    return (prevDate === curDate)
   }
 
   const skipTime = () => {
@@ -29,52 +28,61 @@ const Message = (props) => {
     return (nextTime === curTime)
   }
 
-  let messageInner
-  if (props.type === 1) {
-    messageInner = <div className="message-inner">{ props.message }</div>
+  const textMessage = () => {
+    return (<div className="message-inner">{props.message}</div>)
   }
-  else {
+  const imageMessage = () => {
     const images = ['jpg', 'png', 'gif', 'jpeg', 'bmp']
     const extension = JSON.parse(props.message).location.split('.').pop()
     const expired = script.timestampToDay(props.timestamp, 1, 0)
 
-    messageInner =
-    <div>
-      {( extension && images.indexOf(extension) > -1) && (
-        <div
-          className="message-thumbnail"
-          onClick={() => {
-            // window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
-            const chatterbox = document.querySelector('iframe.chatterbox-iframe')
-            chatterbox.contentWindow.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
-          }}>
-          <img src={ JSON.parse(props.message).location }/>
+    return (
+      <div>
+        {(extension && images.indexOf(extension) > -1) && (
+          <div
+            className="message-thumbnail"
+            onClick={() => {
+              // window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
+              const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+              chatterbox.contentWindow.parent.postMessage({
+                method: 'image',
+                url: JSON.parse(props.message).location
+              }, '*')
+            }}>
+            <img onLoad={props.onLoadImage} src={JSON.parse(props.message).location}/>
+          </div>)}
+        <div className="message-file">
+          <div
+            className="message-file-name">{JSON.parse(props.message).name}</div>
+          <div className="message-file-size">파일크기
+            : {script.bytesToSize(JSON.parse(props.message).size)}</div>
+          <div className="message-file-expire">유효기간 : {expired} 까지</div>
+          <div className="message-file-save"
+               onClick={() => {
+                 setTimeout(() => {
+                   window.open(JSON.parse(props.message).location)
+                 }, 100)
+               }}>
+            저장하기
+          </div>
         </div>
-      )}
-      <div className="message-file">
-        <div className="message-file-name">{ JSON.parse(props.message).name }</div>
-        <div className="message-file-size">파일크기 : { script.bytesToSize(JSON.parse(props.message).size) }</div>
-        <div className="message-file-expire">유효기간 : { expired } 까지</div>
-        <div className="message-file-save"
-          onClick={() => {
-            setTimeout(() => {
-              window.open(JSON.parse(props.message).location)
-            }, 100)
-          }}>
-          저장하기
-        </div>
-      </div>
-    </div>
+      </div>)
   }
 
+  const messageInner = ((type)=> {
+    return type === 1
+      ? textMessage()
+      : imageMessage()
+  })(props.type)
+
   return (
-    <>      
+    <>
       { !skipDate() && (
         // 날짜 표시 yyyy.mm.dd
         <div className="message-date"><span>{script.timestampToDay(props.timestamp)}</span></div>
       )}
-            
-      { isMyself ? (       
+
+      { isMyself ? (
         // 방문자 메세지 
         <div className="message myself">
           { !skipTime() && (
@@ -88,13 +96,13 @@ const Message = (props) => {
           <div className="message-profile">
             { (!isSameUser || !skipDate()) && (
               <>
-              { config.profileImage ? (
-                <div className="message-profile-image">
-                  <img src={ JSON.parse(config.profileImage).location }/>
-                </div>
-              ) : (
-                <div className="message-profile-icon" style={{backgroundColor: config.themeColor}}>{ nickname.substring(0, 1) }</div>
-              )}
+                { config.profileImage ? (
+                  <div className="message-profile-image">
+                    <img src={ JSON.parse(config.profileImage).location }/>
+                  </div>
+                ) : (
+                  <div className="message-profile-icon" style={{backgroundColor: config.themeColor}}>{ nickname.substring(0, 1) }</div>
+                )}
               </>
             )}
           </div>
@@ -108,7 +116,7 @@ const Message = (props) => {
               { messageInner }
               { !skipTime() && (
                 <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
-              )}              
+              )}
             </div>
           </div>
         </div>
