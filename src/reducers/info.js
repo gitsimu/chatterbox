@@ -9,7 +9,8 @@ const initialState = {
   connected: false,
   isLoading: false,
   themeColor: '#444C5E',
-  iconConfig: {}
+  iconConfig: {},
+  customData: {}
 }
 
 const info = (state = initialState, action) => {
@@ -26,7 +27,8 @@ const info = (state = initialState, action) => {
         svid: action.svid,
         connected: true,
         isLoading: false,
-        iconConfig: action.iconConfig
+        iconConfig: action.iconConfig,
+        customData: action.customData
       }
     case 'RE_CONNECT':
       return {
