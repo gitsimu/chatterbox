@@ -5,19 +5,44 @@ import useMessageGetter from '../hooks/useMessageGetter'
 import useScrollTo from '../hooks/useScrollTo'
 
 const PAGE_SIZE = 50
-const ChatWindow = ({info, message, initMessage, addMessage, pagingMessage, database, isLoading}) => {
+const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagingMessage, database, isLoading}) => {
   const body = React.useRef(null)
   const [page, setPage] = React.useState(0)
-  const chatStartTime = React.useRef(new Date().getTime())
+  const chatStartTime = React.useRef(0)
   const [hasBeforePage, setHasBeforePage] = React.useState(false)
 
   const [getMessageList, onMessageAdded] = useMessageGetter(database, chatStartTime.current)
   const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message])
 
   React.useEffect(() => {
+    chatStartTime.current = new Date().getTime()
+
+    if (!script.checkWorkingTime(info.config.workingDay)) {
+      initMessage([{
+        id: 'missed',
+        message: info.config.workingDay.message,
+        timestamp: chatStartTime.current,
+        type: 1,
+        userId: info.key
+      }])
+
+      return
+    }
+
+    setPage(1)
+
+    const messageListener = getMessageListener()
+    return ()=> {
+      messageListener.off()
+      clearMessage()
+    }
+  }, [info.id])
+
+  React.useEffect(() => {
     if (page === 0) return
 
-    (page === 1 ? setScrollBottom : setScrollFix)()
+    const setScroll = page === 1 ? setScrollBottom : setScrollFix
+    setScroll()
 
     const lastTimestamp = page === 1
       ? chatStartTime.current
@@ -46,29 +71,14 @@ const ChatWindow = ({info, message, initMessage, addMessage, pagingMessage, data
            })
   }, [info.id, page])
 
-  React.useEffect(() => {
-    if (!script.checkWorkingTime(info.config.workingDay)) {
-      initMessage([{
-        id: 'missed',
-        message: info.config.workingDay.message,
-        timestamp: chatStartTime.current,
-        type: 1,
-        userId: info.key
-      }])
+  const getMessageListener = () => {
+    const listener = onMessageAdded()
+    listener.on(chatStartTime.current + 1, (addedMessage) => {
+      setScrollBottom()
+      addMessage(addedMessage)
+    })
 
-      return
-    }
-
-    setPage(1)
-    onMessageListner()
-  }, [info.id])
-
-  const onMessageListner = () => {
-    onMessageAdded(chatStartTime.current + 1)
-      .on(addedMessage => {
-        setScrollBottom()
-        addMessage(addedMessage)
-      })
+    return listener
   }
 
   return (

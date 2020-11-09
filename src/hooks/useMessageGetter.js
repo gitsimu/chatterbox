@@ -10,7 +10,9 @@ const useMessageGetter = (database) => {
   React.useEffect(() => {
     if(!info.id) return
 
-    CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
+    CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`)
+                               .orderByChild('timestamp')
+
     return () => {
       CHAT_REF.current.off()
     }
@@ -34,19 +36,27 @@ const useMessageGetter = (database) => {
                   })
   }, [info.id])
 
-  const onMessageAdded = React.useCallback( timestamp => {
+  const onMessageAdded = React.useCallback( () => {
     const chatRef = CHAT_REF.current
+    let _ref = null
+
+    const on = (timestamp, callback) => {
+      _ref = chatRef.startAt(timestamp)
+      _ref.on('child_added', (snapshot) => {
+        if (snapshot.key === 'userinfo'
+          || snapshot.key === 'timestamp') return
+
+        callback(snapshot.val())
+      })
+    }
+
+    const off = ()=> {
+      _ref && _ref.off()
+    }
 
     return {
-      on: callback => {
-        chatRef.startAt(timestamp)
-               .on('child_added', (snapshot) => {
-                 if (snapshot.key === 'userinfo'
-                   || snapshot.key === 'timestamp') return
-
-                 callback(snapshot.val())
-               })
-      }
+      on: on,
+      off: off
     }
   }, [info.id])
 

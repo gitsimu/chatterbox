@@ -18,7 +18,7 @@ import '../css/style.scss'
 import useMultiLoading from '../hooks/useMultiLoading'
 
 const App = ({ info, addConfig, reConnect, authEnd }) => {
-  const [iconActive, isIconActive] = React.useState(true)  
+  const [iconActive, isIconActive] = React.useState(true)
   const [activate, isActivate] = React.useState(true)
   const [closed, isClosed] = React.useState(false)
   const [opened, isOpened] = React.useState(false)
@@ -200,7 +200,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
         }
       })
 
-    Promise.all([setConfigAfter, setAuthAfter])
+    Promise.all([setConfig, setAuth, setConfigAfter, setAuthAfter])
            .catch((error) => error.messages && alert(error.messages))
 
     return () => {
@@ -256,7 +256,8 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
                   )}
 
                   {(!closed) && (
-                    <AddMessage database={database}/>
+                    <AddMessage
+                      database={database}/>
                   )}
 
                 </>
