@@ -8,6 +8,8 @@ const useMessageGetter = (database) => {
   const CHAT_REF = React.useRef(null)
 
   React.useEffect(() => {
+    if(!info.id) return
+
     CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`).orderByChild('timestamp')
     return () => {
       CHAT_REF.current.off()

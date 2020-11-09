@@ -5,31 +5,30 @@ import Header from './Header'
 import Frame from '../components/Frame'
 import axios from 'axios'
 import FirebaseConfig from '../../firebase.config'
-import * as firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/firestore"
-import "firebase/database"
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'firebase/database'
 
-import { connect } from 'react-redux'
-import { addConfig, reConnect } from '../actions'
+import {connect} from 'react-redux'
+import {addConfig, authEnd, reConnect} from '../actions'
 import * as global from '../js/global.js'
 import * as script from '../js/script.js'
 import '../css/style.scss'
+import useMultiLoading from '../hooks/useMultiLoading'
 
-const App = ({ info, addConfig, reConnect }) => {
+const App = ({ info, addConfig, reConnect, authEnd }) => {
   const [iconActive, isIconActive] = React.useState(true)  
   const [activate, isActivate] = React.useState(true)
-  const [loading, isLoading] = React.useState(false)
   const [closed, isClosed] = React.useState(false)
   const [opened, isOpened] = React.useState(false)
-  const [connected, isConnected] = React.useState(false)
   const [database, setDatabase] = React.useState(null)
   const [user, setUser] = React.useState(null)
-
+  const [loading, isAppLoading, isChatLoading] = useMultiLoading([false, false])
   const [iconStyle, setIconStyle] = React.useState(null)
   const [iconImageStyle, setIconImageStyle] = React.useState(null)
   const [iconText, setIconText] = React.useState(null)
-  
+
   React.useEffect(() => {
     /* iframe에 Element를 추가할 때 Firefox에서 정상적으로 추가가 되지 않는데 setTimeout을 사용하여 해결
      * https://bugzilla.mozilla.org/show_bug.cgi?id=297685
@@ -85,7 +84,6 @@ const App = ({ info, addConfig, reConnect }) => {
           icon.right = parseInt(conf.axisX)
           break
       }
-      // console.log('iconConfig', isMobile, icon, iconImageStyle)
 
       if (conf.text) {
         const text = decodeURIComponent(conf.text)
@@ -112,82 +110,98 @@ const App = ({ info, addConfig, reConnect }) => {
     const configRef = _database.ref(`/${info.key}/config`)
     const userRef = _database.ref(`/${info.key}/users/${info.id}`)
 
-    Promise.resolve()
-      .then(() => { isLoading(true)})
-      .then(() => {        
-        configRef.once('value', snapshot => {
-          const data = snapshot.val()
-          const initConfig = {
-            title: '채팅 상담',
-            subTitle: '보통 몇 분 내에 응답합니다',
-            nickname: 'Manager',
-            firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
-            themeColor: '#444c5d',
-            email: '',
-            mobile: '',
-          }
+    isAppLoading(true)
 
-          let config
-          if (data) {
-            config = {
-              title: data.title || initConfig.title,
-              subTitle: data.subTitle || initConfig.subTitle,
-              nickname: data.nickname || initConfig.nickname,
-              firstMessage: data.firstMessage || initConfig.firstMessage,
-              themeColor: data.themeColor || initConfig.themeColor,
-              email: data.email || initConfig.email,
-              mobile: data.mobile || initConfig.mobile,
-              profileImage: data.profileImage || null
-            }
-          }
-          else {
-            config = initConfig
-          }
-
-          addConfig({config: config})          
-
-          if (data && data.workingDay) {
-            isActivate(script.checkWorkingTime(data.workingDay))
-          }
-        })
-      })
-      .then(() => {                
-        userRef.on('value', snapshot => {
-          const data = snapshot.val()
-          isClosed(data && data.state === 2)
-          setUser(data)
-          
-          // Live connect
-          if (data && data.live !== 1) {
-            userRef.child('live').set(1)
-          }
-        })
-        // Live disconnect
-        userRef.onDisconnect().update({live: 0})
-        window.onbeforeunload = () => {
-          userRef.child('live').set(0)
+    const setConfig = Promise
+      .resolve()
+      .then(() => configRef.once('value'))
+      .then(snapshot => {
+        const data = snapshot.val()
+        const initConfig = {
+          title: '채팅 상담',
+          subTitle: '보통 몇 분 내에 응답합니다',
+          nickname: 'Manager',
+          firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
+          themeColor: '#444c5d',
+          email: '',
+          mobile: ''
         }
-        
-        isConnected(true)
+
+        let config
+        if (data) {
+          config = {
+            title: data.title || initConfig.title,
+            subTitle: data.subTitle || initConfig.subTitle,
+            nickname: data.nickname || initConfig.nickname,
+            firstMessage: data.firstMessage || initConfig.firstMessage,
+            themeColor: data.themeColor || initConfig.themeColor,
+            email: data.email || initConfig.email,
+            mobile: data.mobile || initConfig.mobile,
+            profileImage: data.profileImage || null
+          }
+        } else {
+          config = initConfig
+        }
+
         setDatabase(_database)
+        addConfig({config: config})
+        isAppLoading(false)
+
+        if (data && data.workingDay) {
+          isActivate(script.checkWorkingTime(data.workingDay))
+        }
       })
-      /* 시간이 오래 소요되는 인증처리를 마지막에 수행한다 */
+
+    const setAuth = setConfig
       .then(() => {
         return getFirebaseAuthToken(info.id)
           .then(({data}) => {
             if (data.result !== 'success') throw new Error()
             return data
           })
-          .catch(() => { throw new Error('인증 서버에서 연결을 거부하였습니다.')})
+          .catch(() => {
+            throw new Error('인증 서버에서 연결을 거부하였습니다.')
+          })
       })
-      .then(data => {        
-        return firebase.auth().signInWithCustomToken(data.token)
-          .catch(() => { throw new Error('인증에 실패하였습니다.')})
-      })      
-      .catch((error) => error.messages && alert(error.messages))
-      .finally(() => {        
-        isLoading(false)
+      .then(data => {
+        return firebase.auth()
+                       .signInWithCustomToken(data.token)
+                       .then(() => authEnd())
+                       .catch(() => {
+                         throw new Error('인증에 실패하였습니다.')
+                       })
       })
+
+    const setConfigAfter = setConfig
+      .then(() => {
+        userRef.on('value', snapshot => {
+          const data = snapshot.val()
+          isClosed(data && data.state === 2)
+        })
+      })
+
+    const setAuthAfter = setAuth
+      .then(()=> userRef.once('value'))
+      .then(snapshot => {
+        const data = snapshot.val()
+        isClosed(data && data.state === 2)
+        setUser(data)
+
+        // Live connect
+        if (data && data.live !== 1) {
+          userRef.child('live').set(1)
+        }
+      })
+      .then(()=> {
+        // Live disconnect
+        userRef.onDisconnect().update({live: 0})
+        window.onbeforeunload = () => {
+          userRef.child('live').set(0)
+        }
+      })
+
+    Promise.all([setConfigAfter, setAuthAfter])
+           .catch((error) => error.messages && alert(error.messages))
 
     return () => {
       configRef.off()
@@ -215,10 +229,11 @@ const App = ({ info, addConfig, reConnect }) => {
           <Frame location={info.iconConfig.position}>
             <div className='chat-window'>
               <Header isIconActive={isIconActive}/>
-              {(opened && connected && info.config && Object.keys(info.config).length !== 0) ? (
+              {(opened && info.config && Object.keys(info.config).length !== 0) ? (
                 <>
-                  <VisibleChatWindow database={ database } isLoading={ isLoading }/>
-                  {closed ? (
+                  <VisibleChatWindow database={ database } isLoading={ isChatLoading }/>
+
+                  {closed && (
                     <>
                       <div style={{backgroundColor: '#fff', height: 50}}></div>
                       <div 
@@ -238,14 +253,18 @@ const App = ({ info, addConfig, reConnect }) => {
                         </div>
                       </div>
                     </>
-                  ) : (
-                    <AddMessage database={ database }/>
                   )}
+
+                  {(!closed) && (
+                    <AddMessage database={database}/>
+                  )}
+
                 </>
               ) : (
                 <div style={{height: '100%', backgroundColor: '#fff'}}></div>
               )}
-              {loading && (
+
+              {(loading) && (
                 <div id="loading"><div></div></div>
               )}
             </div>
@@ -256,9 +275,8 @@ const App = ({ info, addConfig, reConnect }) => {
   )
 }
 
-const getFirebaseAuthToken = async (uuid) => {
-  const res = await axios.post(`${global.serverAddress()}/api/auth`, { uuid: uuid })
-  return await res
+const getFirebaseAuthToken = (uuid) => {
+  return axios.post(`${global.serverAddress()}/api/auth`, { uuid: uuid })
 }
 
 const mapStateToProps = state => ({
@@ -266,7 +284,8 @@ const mapStateToProps = state => ({
 })
 const mapDispatchToProps = dispatch => ({
   addConfig: i => dispatch(addConfig(i)),
-  reConnect: i => dispatch(reConnect(i))
+  reConnect: i => dispatch(reConnect(i)),
+  authEnd: () => dispatch(authEnd())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

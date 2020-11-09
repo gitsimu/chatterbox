@@ -8,7 +8,40 @@ const useSendMessage = (database) => {
   const [sendingTerm, isSendingTerm] = React.useState(false)
   const info = useSelector(state => state.info)
 
-  const updateDatabase = (senderId, message, type, noti)=> {
+  const beforeAuthMessage = React.useRef([])
+
+  React.useEffect(() => {
+    if(!info.auth) return
+
+    let m
+    while((m = beforeAuthMessage.current.shift())){
+      updateDatabase.call(undefined, ...m)
+    }
+  }, [info.auth])
+
+  const chatbotMessage = (message, type) => {
+    updateDatabase('CHATBOT', message, type, false)
+  }
+
+  const sendMessage = (message, type, noti = true) => {
+    if (sendingTerm) return;
+    isSendingTerm(true)
+
+    updateDatabase(info.id, message, type, noti)
+
+    // 메세지 발송 텀 0.3s
+    setTimeout(() => {
+      isSendingTerm(false)
+    }, 300)
+
+  }
+
+  const updateDatabase = function (senderId, message, type, noti) {
+    if (!info.auth) {
+      beforeAuthMessage.current.push(arguments)
+      return
+    }
+
     const timestamp = firebase.database.ServerValue.TIMESTAMP
     const messageId = Math.random().toString(36).substr(2, 9)
     let trimMessage
@@ -28,7 +61,7 @@ const useSendMessage = (database) => {
         const data = info.customData[key]
         if (data && data !== '') {
           customData[key] = data
-        }          
+        }
       })
     }
 
@@ -50,7 +83,8 @@ const useSendMessage = (database) => {
       timestamp: timestamp
     })
 
-    if(!noti) return
+    if (!noti) return
+
     database.ref(`/${info.key}/recents`).update({
       userId: senderId,
       type: type,
@@ -66,18 +100,6 @@ const useSendMessage = (database) => {
       })
   }
 
-  const sendMessage = (message, type, noti = true) => {
-    if (sendingTerm) return;
-    isSendingTerm(true)
-
-    updateDatabase(info.id, message, type, noti)
-
-    // 메세지 발송 텀 0.3s
-    setTimeout(() => {
-      isSendingTerm(false)
-    }, 300)
-  }
-
   /* 메세지 발송 시 푸시 요청 */
   const pushNotification = async (message) => {
     const code = script.guestCodeGenerator(info.id)
@@ -91,7 +113,7 @@ const useSendMessage = (database) => {
     return axios.post('https://smlog.co.kr/api/app_api.php', formData, config)
   }
 
-  return [sendMessage]
+  return [sendMessage, chatbotMessage]
 }
 
 export default useSendMessage

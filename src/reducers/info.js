@@ -8,6 +8,7 @@ const initialState = {
   config: {},
   connected: false,
   isLoading: false,
+  auth : false,
   themeColor: '#444C5E',
   iconConfig: {},
   customData: {}
@@ -44,6 +45,11 @@ const info = (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.isLoading
+      }
+    case 'AUTH_END':
+      return {
+        ...state,
+        auth : true
       }
     default:
       return state

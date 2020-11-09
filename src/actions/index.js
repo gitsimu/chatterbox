@@ -36,3 +36,7 @@ export const isLoading = l => ({
   type: 'LOADING',
   isLoading: l.isLoading
 })
+
+export const authEnd = ()=> ({
+  type : 'AUTH_END'
+})
