@@ -19,30 +19,42 @@ const useSendMessage = (database) => {
     }
   }, [info.auth])
 
-  const chatbotMessage = (message, type) => {
-    updateDatabase('CHATBOT', message, type, false)
+  const sendMessageList = (list) => {
+    let myLast = 0
+    for (let i = list.length - 1; i >= 0; i--) {
+      if(list[i].userId !== info.id) continue
+      myLast = i
+      break;
+    }
+
+    list.forEach((h, i)=> {
+      let noti = myLast === i
+      updateDatabase(h.userId, h.message, h.type, h.timestamp, noti)
+    })
   }
 
-  const sendMessage = (message, type, noti = true) => {
-    if (sendingTerm) return;
+  const sendMessage = (message, type) => {
+    if (sendingTerm) return false
+
     isSendingTerm(true)
 
-    updateDatabase(info.id, message, type, noti)
+    updateDatabase(info.id, message, type, firebase.database.ServerValue.TIMESTAMP, true)
 
     // 메세지 발송 텀 0.3s
     setTimeout(() => {
       isSendingTerm(false)
     }, 300)
 
+    return true
   }
 
-  const updateDatabase = function (senderId, message, type, noti) {
+  const updateDatabase = function (senderId, message, type, timestamp, noti) {
     if (!info.auth) {
       beforeAuthMessage.current.push(arguments)
       return
     }
 
-    const timestamp = firebase.database.ServerValue.TIMESTAMP
+    timestamp = timestamp || firebase.database.ServerValue.TIMESTAMP
     const messageId = Math.random().toString(36).substr(2, 9)
     let trimMessage
     let lastMessage
@@ -113,7 +125,7 @@ const useSendMessage = (database) => {
     return axios.post('https://smlog.co.kr/api/app_api.php', formData, config)
   }
 
-  return [sendMessage, chatbotMessage]
+  return [sendMessage, sendMessageList]
 }
 
 export default useSendMessage

@@ -4,27 +4,26 @@ import {useSelector} from 'react-redux'
 const useMessageGetter = (database) => {
   const info = useSelector(state => state.info)
 
-  /** @type {{current : firebase.database.Query}} */
+  const minTimestamp = React.useRef(Number.MAX_SAFE_INTEGER)
+
   const CHAT_REF = React.useRef(null)
 
   React.useEffect(() => {
     if(!info.id) return
 
-    CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`)
-                               .orderByChild('timestamp')
-
-    return () => {
-      CHAT_REF.current.off()
+    return ()=> {
+      CHAT_REF.current && CHAT_REF.current.off()
+      minTimestamp.current = Number.MAX_SAFE_INTEGER
     }
   }, [info.id])
 
-  const getMessageList = React.useCallback((count, timestamp) => {
-    const chatRef = CHAT_REF.current
-
+  const getMessageList = React.useCallback((count) => {
     return Promise.resolve()
-                  .then(()=> chatRef.limitToLast(count)
-                                    .endAt(timestamp)
-                                    .once('value'))
+                  .then(() => database.ref(`/${info.key}/messages/${info.id}`)
+                                      .orderByChild('timestamp')
+                                      .limitToLast(count)
+                                      .endAt(minTimestamp.current - 1)
+                                      .once('value'))
                   .then(snapshots => {
                     if (snapshots.val() === null) return []
 
@@ -34,32 +33,29 @@ const useMessageGetter = (database) => {
                     })
                     return arr
                   })
+                  .then(arr=> {
+                    if(arr.length){
+                      minTimestamp.current = Math.min(minTimestamp.current, arr[0].timestamp)
+                    }
+                    return arr
+                  })
   }, [info.id])
 
-  const onMessageAdded = React.useCallback( () => {
-    const chatRef = CHAT_REF.current
-    let _ref = null
+  const onMessageAdded = (timestamp, callback) => {
+    CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`)
+                               .orderByChild('timestamp')
+                               .startAt(timestamp)
+    CHAT_REF.current.on('child_added', (snapshot) => {
+      if (snapshot.key === 'userinfo'
+        || snapshot.key === 'timestamp') return
 
-    const on = (timestamp, callback) => {
-      _ref = chatRef.startAt(timestamp)
-      _ref.on('child_added', (snapshot) => {
-        if (snapshot.key === 'userinfo'
-          || snapshot.key === 'timestamp') return
+      const addedMessage = snapshot.val()
 
-        callback(snapshot.val())
-      })
-    }
+      minTimestamp.current = Math.min(minTimestamp.current, addedMessage.timestamp)
 
-    const off = ()=> {
-      _ref && _ref.off()
-    }
-
-    return {
-      on: on,
-      off: off
-    }
-  }, [info.id])
-
+      callback(addedMessage)
+    })
+  }
 
   return [getMessageList, onMessageAdded]
 }

@@ -28,6 +28,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
   const [iconStyle, setIconStyle] = React.useState(null)
   const [iconImageStyle, setIconImageStyle] = React.useState(null)
   const [iconText, setIconText] = React.useState(null)
+  const [activeAddMessage, setActiveAddMessage] = React.useState(false)
 
   React.useEffect(() => {
     /* iframe에 Element를 추가할 때 Firefox에서 정상적으로 추가가 되지 않는데 setTimeout을 사용하여 해결
@@ -231,7 +232,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
               <Header isIconActive={isIconActive}/>
               {(opened && info.config && Object.keys(info.config).length !== 0) ? (
                 <>
-                  <VisibleChatWindow database={ database } isLoading={ isChatLoading }/>
+                  <VisibleChatWindow database={ database } isLoading={ isChatLoading } setActiveAddMessage={setActiveAddMessage} />
 
                   {closed && (
                     <>
@@ -255,10 +256,10 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
                     </>
                   )}
 
-                  {(!closed) && (
-                    <AddMessage
-                      database={database}/>
-                  )}
+                  {(!closed && activeAddMessage) && (<AddMessage database={database}/>)}
+
+                  {(!closed && !activeAddMessage) && (<div style={{height: '100%', backgroundColor: '#fff'}}></div>)}
+
 
                 </>
               ) : (
