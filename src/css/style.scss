@@ -83,6 +83,7 @@ iframe.chatterbox-iframe.active {
   position: relative;
   max-width: 350px;
   max-height: 600px;
+  height: 100%;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 20px;    
@@ -558,6 +559,7 @@ iframe.chatterbox-iframe.active {
   align-items: center;
   justify-content: center;  
   z-index: 100;
+  background-color: #fff;
 
   & > div {
     display: inline-block;
