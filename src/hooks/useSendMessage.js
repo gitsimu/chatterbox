@@ -5,7 +5,7 @@ import * as script from '../js/script'
 import axios from 'axios'
 
 const useSendMessage = (database) => {
-  const [sendingTerm, isSendingTerm] = React.useState(false)
+  const sendingTerm = React.useRef(false)
   const info = useSelector(state => state.info)
 
   const beforeAuthMessage = React.useRef([])
@@ -28,21 +28,19 @@ const useSendMessage = (database) => {
     }
 
     list.forEach((h, i)=> {
-      let noti = myLast === i
-      updateDatabase(h.userId, h.message, h.type, h.timestamp, noti)
+      updateDatabase(h.userId, h.message, h.type, h.timestamp, myLast === i)
     })
   }
 
   const sendMessage = (message, type) => {
-    if (sendingTerm) return false
-
-    isSendingTerm(true)
+    if (sendingTerm.current) return false
+    sendingTerm.current = true
 
     updateDatabase(info.id, message, type, firebase.database.ServerValue.TIMESTAMP, true)
 
     // 메세지 발송 텀 0.3s
     setTimeout(() => {
-      isSendingTerm(false)
+      sendingTerm.current = false
     }, 300)
 
     return true
@@ -95,7 +93,7 @@ const useSendMessage = (database) => {
       timestamp: timestamp
     })
 
-    if (!noti) return
+    if (!noti || !script.checkWorkingTime(info.config.workingDay)) return
 
     database.ref(`/${info.key}/recents`).update({
       userId: senderId,

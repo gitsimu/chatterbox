@@ -7,70 +7,24 @@ import useSendMessage from '../hooks/useSendMessage'
 
 const PAGE_SIZE = 50
 const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagingMessage, database, isLoading, setActiveAddMessage}) => {
+  const chatbotList = info.config.chatbot?.list || []
   const body = React.useRef(null)
-  const [hasBeforePage, setHasBeforePage] = React.useState(false)
-  const [currentChatbot, setCurrentChatbot] = React.useState(null)
-  const [chatbotQnABox, setChatbotQnABox] = React.useState([
-    {
-      id: 1,
-      questions: [
-        {message: '첫번째 메시지.', type: 1},
-        {message: '선택하세요.', type: 1},
-      ],
-      answers: [
-        {to: 2, message: '11111111111111111111111111111111111111111111111111'},
-        {to: 2, message: '1111'},
-        {to: 2, message: '2222222222222222222222222222222222222222222222222'},
-        {to: 2, message: '33'},
-        {to: 3, message: '44'},
-        {to: 4, message: '555555555555555555555555555555555555555'},
-        {to: 4, message: '1'}
-      ]
-    },
-    {
-      id: 2,
-      questions: [
-        {message: '2번입니다.', type: 1},
-        {message: '다시 선택하세요.', type: 1}
-      ],
-      answers: [
-        {to: 1, message: '1번 질 문'},
-        {to: 3, message: '3번질문ㄱ'},
-        {to: 4, message: '상담원 연결할게요'}
-      ]
-    },
-    {
-      id: 3,
-      questions: [
-        {message: '3번입니다', type: 1},
-        {message: '끝.', type: 1}
-      ],
-      answers: [
-        {to: 1, message: '1번'},
-        {to: 2, message: '2번'},
-        {to: 4, message: '상담원 연결'}
-      ]
-    },
-    {
-      id:4,
-      questions: [
-        {message : "상담사를 연결합니다", type: 1},
-        {
-          message: '{"name":"호빵.png","size":142814,"location":"https://smartlog.s3.ap-northeast-2.amazonaws.com/chat/vb0kpl5gv/7Kdzirv3vMfh.png"}',
-          type: 2
-        }
-      ],
-      action : 'chat'
-    }
-  ])
-  const chatbotHistory = React.useRef([])
-
+  const [hasBeforeMessage, setHasBeforeMessage] = React.useState(false)
   const [getMessageByDB, onAddedMessage] = useMessageGetter(database)
-  const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message])
+  const chatbotHistory = React.useRef([])
   const [sendMessage, sendMessageList] = useSendMessage(database)
+  const [currentChatbot, setCurrentChatbot] = React.useState(null)
+  const [chatbotLoading, setChatbotLoading] = React.useState(false)
+  const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message, currentChatbot, chatbotLoading])
 
-  const chatbotStartTime = ()=> {
-    return true
+  const isActiveChatbot = ()=> {
+    switch (`${info.config.chatbot.state}`){
+      case '0': return false
+      case '1': return true
+      case '2': return script.checkWorkingTime(info.config.workingDay)
+      case '3': return !script.checkWorkingTime(info.config.workingDay)
+      default: return false
+    }
   }
 
   const startMessageListener = (startTimestamp)=> {
@@ -78,6 +32,24 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
       setScrollBottom()
       addMessage(addedMessage)
     })
+  }
+
+  const addBeforeMessage = ()=> {
+    setScrollFix()
+    isLoading(true)
+
+    getMessageByDB(PAGE_SIZE, message[0].timestamp - 1)
+      .then(beforeMessageList => {
+        setHasBeforeMessage(beforeMessageList.length === PAGE_SIZE)
+        pagingMessage(beforeMessageList)
+        isLoading(false)
+      })
+  }
+
+  const startChatbot = () => {
+    setCurrentChatbot(chatbotList[0])
+    setHasBeforeMessage(false)
+    setActiveAddMessage(false)
   }
 
   const onClickChatbotAnswer = (answer)=> {
@@ -91,84 +63,106 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
     chatbotHistory.current.push(message)
     addMessage(message)
 
-    const question = chatbotQnABox.find(question => question.id === answer.to)
+    const question = chatbotList.find(question => `${question.id}` === `${answer.to}`)
     setCurrentChatbot(question)
   }
 
-  const addBeforeMessage = ()=> {
-    setScrollFix()
-    isLoading(true)
-    Promise.resolve()
-           .then(() => getMessageByDB(PAGE_SIZE, message[0].timestamp - 1))
-           .then(beforeMessageList => {
-             setHasBeforePage(beforeMessageList.length === PAGE_SIZE)
-             pagingMessage(beforeMessageList)
-             isLoading(false)
-           })
-  }
-
-  const startChatbot = () => {
-    setCurrentChatbot(chatbotQnABox[0])
-    setHasBeforePage(false)
-    setActiveAddMessage(false)
-  }
+  const waiting = (time) => new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
 
   React.useEffect(() => {
     if(!currentChatbot) return
 
-    let currentTimestamp = new Date().getTime()
-    currentChatbot.questions.map(m => {
-      let message = {
-        id: Math.random().toString(36).substr(2, 9),
-        userId: info.key,
-        message: m.message,
-        type: m.type,
-        timestamp: currentTimestamp++
-      }
-      chatbotHistory.current.push(message)
-      addMessage(message)
-    })
+    Promise.resolve()
+      .then(()=> {
+        const isStart = chatbotHistory.current.length === 0
+        if(isStart) return
 
-    if(currentChatbot.action === "chat"){
-      setActiveAddMessage(true)
-      sendMessageList(chatbotHistory.current)
-      startMessageListener(currentTimestamp)
-    }
+        setChatbotLoading(true)
+        return waiting(1200)
+      })
+      .then(()=> {
+        let currentTimestamp = new Date().getTime()
+
+        if(currentChatbot.action === "CHAT" && !script.checkWorkingTime(info.config.workingDay)){
+          let message = {
+            id: Math.random().toString(36).substr(2, 9),
+            userId: info.key,
+            message: "지금은 운영시간이 아닙니다.\n운영시간 : ",
+            type: 1,
+            timestamp: currentTimestamp++
+          }
+          chatbotHistory.current.push(message)
+          addMessage(message)
+        }
+        else {
+          currentChatbot.questions.map(m => {
+            let message = {
+              id: Math.random().toString(36).substr(2, 9),
+              userId: info.key,
+              message: m.message,
+              type: m.type,
+              timestamp: currentTimestamp++
+            }
+            chatbotHistory.current.push(message)
+            addMessage(message)
+          })
+        }
+
+        if(currentChatbot.action === "CHAT"){
+          setActiveAddMessage(true)
+          sendMessageList(chatbotHistory.current.splice(0))
+          startMessageListener(currentTimestamp)
+        }
+      })
+      .finally(() => setChatbotLoading(false))
 
   }, [currentChatbot])
 
   // 유저 채팅방 on
   React.useEffect(() => {
-
     isLoading(true)
 
     Promise.resolve()
-           .then(() => {
-             return script.checkWorkingTime(info.config.workingDay)
-                  ? getMessageByDB(PAGE_SIZE)
-                  : [{id: 'missed', message: info.config.workingDay.message, timestamp: new Date().getTime(), type: 1, userId: info.key}]
-           })
-           .then((beforeMessageList) => {
+      .then(() => getMessageByDB(PAGE_SIZE))
+      .then((beforeMessageList) => {
 
-             // 기존 대화내역 없고 챗봇 활성화 시간인 경우
-             if(beforeMessageList.length === 0 && chatbotStartTime()) {
-               startChatbot()
-               return
-             }
+        // 기존 대화내역 없고 챗봇 활성화된 경우 챗봇으로 시작
+        if (beforeMessageList.length === 0 && isActiveChatbot()) {
+          startChatbot()
+          return
+        }
 
-             if(beforeMessageList.length === 0){
-               beforeMessageList.push({id: 'first', message: info.config.firstMessage, timestamp: new Date().getTime(), type: 1, userId: info.key})
-             }
+        if (beforeMessageList.length === 0) {
+          beforeMessageList.push({
+            id: 'first',
+            message: info.config.firstMessage,
+            timestamp: new Date().getTime(),
+            type: 1,
+            userId: info.key
+          })
 
-             setScrollBottom()
-             initMessage(beforeMessageList)
-             setActiveAddMessage(true)
-             setHasBeforePage(beforeMessageList.length === PAGE_SIZE)
-             startMessageListener(beforeMessageList[beforeMessageList.length - 1].timestamp + 1)
-           })
-           .finally(()=> {
-             isLoading(false)
-           })
+          if(!script.checkWorkingTime(info.config.workingDay)){
+            beforeMessageList.push({
+              id: 'missed',
+              message: info.config.workingDay.message,
+              timestamp: new Date().getTime(),
+              type: 1,
+              userId: info.key
+            })
+          }
+        }
+
+        setScrollBottom()
+        initMessage(beforeMessageList)
+        setActiveAddMessage(true)
+        setHasBeforeMessage(beforeMessageList.length === PAGE_SIZE)
+        startMessageListener(beforeMessageList[beforeMessageList.length - 1].timestamp + 1)
+      })
+      .finally(() => {
+        isLoading(false)
+      })
 
     return ()=> {
       clearMessage()
@@ -178,10 +172,10 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
   return (
     <div
       className="chat-window-body"
-      style={{backgroundColor: '#fff'}}
+      style={{ backgroundColor: '#fff' }}
       ref={body}>
 
-      {hasBeforePage && (
+      {hasBeforeMessage && (
         <div
           className="chat-more-message"
           onClick={() => addBeforeMessage()}>
@@ -200,7 +194,93 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
         />
       ))}
 
-      {(currentChatbot && currentChatbot.answers && currentChatbot.answers.length) && (
+      <style jsx="true">{`
+        .chatbot-loading::before{
+        content: '';
+        position: absolute;
+        top: 0px;
+        left: -15px;
+        height: 10px;
+        width: 10px;
+        border-radius: 10px;
+        animation: chatbot-loading 1s ease-in-out infinite;
+      }
+        .chatbot-loading{
+        position: relative;
+        width: 10px;
+        height: 10px;
+        top: 46%;
+        left: 15px;
+        border-radius: 10px;
+        animation: chatbot-loading 1s ease-in-out infinite;
+        animation-delay: 0.25s;
+      }
+        .chatbot-loading::after{
+        content: '';
+        position: absolute;
+        top: 0px;
+        left: 15px;
+        height: 10px;
+        width: 10px;
+        border-radius: 10px;
+        animation: chatbot-loading 1s ease-in-out infinite;
+        animation-delay: 0.5s;
+      }
+        @keyframes chatbot-loading{
+        0%{background-color: rgba(255, 255, 255, .2);}
+        25%{background-color: #00000059;}
+        50%{background-color: rgba(255, 255, 255, .2);}
+        75%{background-color: rgba(255, 255, 255, .2);}
+        100%{background-color: rgba(255, 255, 255, .2);}
+      }
+      
+      .chatbot-message {
+       font-size: 15px;
+        max-width: 280px;
+        margin: 3px 5px;
+        word-break: break-word;
+        background-color: #fff;
+        border-radius: 15px;
+        border-color: rgb(228, 228, 229);
+        border-width: 1px;
+        border-style: solid;
+        padding: 10px;
+        cursor: pointer;
+        animation: fadein .3s ease-in-out;
+        outline: none;
+      }
+       .chatbot-message:hover {
+        background-color: #a4bad440;        
+       }
+      
+      `}</style>
+
+      {chatbotLoading && (
+        <div className="message opponent">
+          <div className="message-profile">
+
+            { info.config.profileImage ? (
+              <div className="message-profile-image">
+                <img src={ JSON.parse(info.config.profileImage).location }/>
+              </div>
+            ) : (
+              <div className="message-profile-icon" style={{backgroundColor: info.config.themeColor}}>{ info.config.nickname.substring(0, 1) }</div>
+            )}
+
+          </div>
+          <div className="message-body">
+            <div className="message-top">
+            </div>
+            <div className="message-bottom">
+              <div className="message-inner" style={{width : '65px'}}>
+                <div className="chatbot-loading"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {(!chatbotLoading && currentChatbot && currentChatbot.answers?.length > 0) && (
         <div
           style={{
             textAlign:'right',
@@ -210,23 +290,6 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
             <button
               key={`${chatbotHistory.current.length}_${index}`}
               onClick={() => onClickChatbotAnswer(answer)}
-              style={{
-                fontSize: '15px',
-                maxWidth: '280px',
-                margin: '3px 5px',
-                wordBreak: 'break-word',
-                backgroundColor: '#fff',
-                borderRadius: '15px',
-                borderColor: 'rgb(228, 228, 229)',
-                borderWidth: '1px',
-                borderStyle: 'solid',
-                padding: '10px',
-                cursor: 'pointer',
-                animation: 'fadein .3s ease-in-out',
-                outline: 'none !important',
-                boxShadow: 'none !important'
-              }}
-
               className="chatbot-message">{answer.message}
             </button>
           ))}

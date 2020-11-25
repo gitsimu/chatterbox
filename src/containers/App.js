@@ -104,6 +104,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
   React.useEffect(() => {
     if (!opened) return
 
+
     console.info('[Smartlog] chat connected')
     !firebase.apps.length && firebase.initializeApp(FirebaseConfig)
     const _database = firebase.database()
@@ -117,6 +118,8 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
       .resolve()
       .then(() => configRef.once('value'))
       .then(snapshot => {
+
+
         const data = snapshot.val()
         const initConfig = {
           title: '채팅 상담',
@@ -125,12 +128,16 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
           firstMessage: '방문해주셔서 감사합니다.\n궁금한 내용을 편하게 남겨주세요.',
           themeColor: '#444c5d',
           email: '',
-          mobile: ''
+          mobile: '',
+          chatbot: {
+            state : '0'
+          }
         }
 
         let config
         if (data) {
           config = {
+            chatbot: data.chatbot || initConfig.chatbot,
             title: data.title || initConfig.title,
             subTitle: data.subTitle || initConfig.subTitle,
             nickname: data.nickname || initConfig.nickname,
@@ -138,7 +145,8 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
             themeColor: data.themeColor || initConfig.themeColor,
             email: data.email || initConfig.email,
             mobile: data.mobile || initConfig.mobile,
-            profileImage: data.profileImage || null
+            profileImage: data.profileImage || null,
+            workingDay : data.workingDay,
           }
         } else {
           config = initConfig
@@ -149,7 +157,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
         isAppLoading(false)
 
         if (data && data.workingDay) {
-          isActivate(script.checkWorkingTime(data.workingDay))
+          isActivate(script.checkWorkingTime(data.workingDay) || config.chatbot.state !== 3)
         }
       })
 
@@ -165,6 +173,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
           })
       })
       .then(data => {
+
         return firebase.auth()
                        .signInWithCustomToken(data.token)
                        .then(() => authEnd())
