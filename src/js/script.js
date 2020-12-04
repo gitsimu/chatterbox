@@ -145,3 +145,57 @@ export const guestCodeGenerator = (uid) => {
   }
   return obj;
 }
+
+export const getWorkingSchedule = (workingTime) => {
+  const WEEK_DIC = {
+    'mo': '월',
+    'tu': '화',
+    'we': '수',
+    'th': '목',
+    'fr': '금',
+    'sa': '토',
+    'su': '일'
+  }
+
+  const workingDate = () => {
+    const {week} = workingTime
+    if(week.length === 7) return "매일"
+
+    const workingWeek = Object.keys(WEEK_DIC).map(w => workingTime.week.indexOf(w) > -1 ? WEEK_DIC[w] : 'X')
+    const workingPart = workingWeek.join('').split('X').filter(t=> t)
+
+    const tostr = (w) => w.length > 1
+        ? `${w[0]}~${w[w.length - 1]}`
+        : `${w[0]}`
+
+
+    if(workingPart.length === 1) {
+      return tostr(workingPart[0])
+    }
+    if(workingPart.length === 2) {
+      return `${tostr(workingPart[0])},${tostr(workingPart[1])}`
+    }
+
+    return workingPart.join('').split('').join(',')
+  }
+  const workingTimeStr = ()=>{
+    const {allday, startWork, endWork} = workingTime
+
+    if(allday) return '00:00 ~ 24:00'
+    return `${timestampToTime(new Date(0,0,0,startWork.slice(0,2),startWork.slice(2)), true)} ~ ${timestampToTime(new Date(0,0,0,endWork.slice(0,2),endWork.slice(2)), true)}`
+  }
+
+  const workingStr = () => {
+    return `${workingDate()} : ${workingTimeStr()}`
+  }
+
+  const breakStr = () => {
+    const {breaktime, startBreak, endBreak} = workingTime
+
+    if(!breaktime) return ''
+
+    return `\n점심시간 : ${timestampToTime(new Date(0,0,0,startBreak.slice(0,2),startBreak.slice(2)), true)} ~ ${timestampToTime(new Date(0,0,0,endBreak.slice(0,2),endBreak.slice(2)), true)}`
+  }
+
+  return `현재 상담시간이 아닙니다.\n\n상담 운영시간\n${workingStr()}${breakStr()}`
+}

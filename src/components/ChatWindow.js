@@ -80,7 +80,7 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
         if(isStart) return
 
         setChatbotLoading(true)
-        return waiting(1200)
+        return waiting(800)
       })
       .then(()=> {
         let currentTimestamp = new Date().getTime()
@@ -89,12 +89,17 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
           let message = {
             id: Math.random().toString(36).substr(2, 9),
             userId: info.key,
-            message: "지금은 운영시간이 아닙니다.\n운영시간 : ",
+            message: script.getWorkingSchedule(info.config.workingDay),
             type: 1,
             timestamp: currentTimestamp++
           }
-          chatbotHistory.current.push(message)
           addMessage(message)
+          currentChatbot.answers = [{
+            message : '처음으로',
+            to : chatbotList[0].id
+          }]
+
+          return
         }
         else {
           currentChatbot.questions.map(m => {
@@ -194,67 +199,6 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
         />
       ))}
 
-      <style jsx="true">{`
-        .chatbot-loading::before{
-        content: '';
-        position: absolute;
-        top: 0px;
-        left: -15px;
-        height: 10px;
-        width: 10px;
-        border-radius: 10px;
-        animation: chatbot-loading 1s ease-in-out infinite;
-      }
-        .chatbot-loading{
-        position: relative;
-        width: 10px;
-        height: 10px;
-        top: 46%;
-        left: 15px;
-        border-radius: 10px;
-        animation: chatbot-loading 1s ease-in-out infinite;
-        animation-delay: 0.25s;
-      }
-        .chatbot-loading::after{
-        content: '';
-        position: absolute;
-        top: 0px;
-        left: 15px;
-        height: 10px;
-        width: 10px;
-        border-radius: 10px;
-        animation: chatbot-loading 1s ease-in-out infinite;
-        animation-delay: 0.5s;
-      }
-        @keyframes chatbot-loading{
-        0%{background-color: rgba(255, 255, 255, .2);}
-        25%{background-color: #00000059;}
-        50%{background-color: rgba(255, 255, 255, .2);}
-        75%{background-color: rgba(255, 255, 255, .2);}
-        100%{background-color: rgba(255, 255, 255, .2);}
-      }
-      
-      .chatbot-message {
-       font-size: 15px;
-        max-width: 280px;
-        margin: 3px 5px;
-        word-break: break-word;
-        background-color: #fff;
-        border-radius: 15px;
-        border-color: rgb(228, 228, 229);
-        border-width: 1px;
-        border-style: solid;
-        padding: 10px;
-        cursor: pointer;
-        animation: fadein .3s ease-in-out;
-        outline: none;
-      }
-       .chatbot-message:hover {
-        background-color: #a4bad440;        
-       }
-      
-      `}</style>
-
       {chatbotLoading && (
         <div className="message opponent">
           <div className="message-profile">
@@ -290,7 +234,7 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
             <button
               key={`${chatbotHistory.current.length}_${index}`}
               onClick={() => onClickChatbotAnswer(answer)}
-              className="chatbot-message">{answer.message}
+              className="chatbot-button">{answer.message}
             </button>
           ))}
         </div>

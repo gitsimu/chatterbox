@@ -2,24 +2,25 @@ import React from 'react'
 import {useSelector} from 'react-redux'
 
 const useMessageGetter = (database) => {
-  const info = useSelector(state => state.info)
+  const id = useSelector(state => state.info.id)
+  const key = useSelector(state => state.info.key)
 
   const minTimestamp = React.useRef(Number.MAX_SAFE_INTEGER)
 
   const CHAT_REF = React.useRef(null)
 
   React.useEffect(() => {
-    if(!info.id) return
+    if(!id) return
 
     return ()=> {
       CHAT_REF.current && CHAT_REF.current.off()
       minTimestamp.current = Number.MAX_SAFE_INTEGER
     }
-  }, [info.id])
+  }, [id])
 
   const getMessageList = React.useCallback((count) => {
     return Promise.resolve()
-                  .then(() => database.ref(`/${info.key}/messages/${info.id}`)
+                  .then(() => database.ref(`/${key}/messages/${id}`)
                                       .orderByChild('timestamp')
                                       .limitToLast(count)
                                       .endAt(minTimestamp.current - 1)
@@ -39,10 +40,10 @@ const useMessageGetter = (database) => {
                     }
                     return arr
                   })
-  }, [info.id])
+  }, [id])
 
   const onMessageAdded = (timestamp, callback) => {
-    CHAT_REF.current = database.ref(`/${info.key}/messages/${info.id}`)
+    CHAT_REF.current = database.ref(`/${key}/messages/${id}`)
                                .orderByChild('timestamp')
                                .startAt(timestamp)
     CHAT_REF.current.on('child_added', (snapshot) => {

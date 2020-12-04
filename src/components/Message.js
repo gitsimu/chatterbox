@@ -1,6 +1,7 @@
 import React from 'react'
 import * as script from '../js/script.js'
 import '../css/style.scss'
+import ChatMessageInner from './ChatMessageInner'
 
 const Message = (props) => {
   const isMyself = props.info.id === props.userId
@@ -18,6 +19,8 @@ const Message = (props) => {
   }
 
   const skipTime = () => {
+    if ([3, 4].includes(props.type)) return true
+
     if (!props.next || props.next.userId !== props.userId) {
       return false
     }
@@ -28,52 +31,13 @@ const Message = (props) => {
     return (nextTime === curTime)
   }
 
-  const textMessage = () => {
-    return (<div className="message-inner">{props.message}</div>)
+  const imageView = (url) => {
+    const chatterbox = document.querySelector('iframe.chatterbox-iframe')
+    chatterbox.contentWindow.parent.postMessage({
+      method: 'image',
+      url: url
+    }, '*')
   }
-  const imageMessage = () => {
-    const images = ['jpg', 'png', 'gif', 'jpeg', 'bmp']
-    const extension = JSON.parse(props.message).location.split('.').pop()
-    const expired = script.timestampToDay(props.timestamp, 1, 0)
-
-    return (
-      <div>
-        {(extension && images.indexOf(extension) > -1) && (
-          <div
-            className="message-thumbnail"
-            onClick={() => {
-              // window.parent.postMessage({ method: 'image', url: JSON.parse(props.message).location }, '*')
-              const chatterbox = document.querySelector('iframe.chatterbox-iframe')
-              chatterbox.contentWindow.parent.postMessage({
-                method: 'image',
-                url: JSON.parse(props.message).location
-              }, '*')
-            }}>
-            <img onLoad={props.onLoadImage} src={JSON.parse(props.message).location}/>
-          </div>)}
-        <div className="message-file">
-          <div
-            className="message-file-name">{JSON.parse(props.message).name}</div>
-          <div className="message-file-size">파일크기
-            : {script.bytesToSize(JSON.parse(props.message).size)}</div>
-          <div className="message-file-expire">유효기간 : {expired} 까지</div>
-          <div className="message-file-save"
-               onClick={() => {
-                 setTimeout(() => {
-                   window.open(JSON.parse(props.message).location)
-                 }, 100)
-               }}>
-            저장하기
-          </div>
-        </div>
-      </div>)
-  }
-
-  const messageInner = ((type)=> {
-    return type === 1
-      ? textMessage()
-      : imageMessage()
-  })(props.type)
 
   return (
     <>
@@ -83,12 +47,20 @@ const Message = (props) => {
       )}
 
       { isMyself ? (
-        // 방문자 메세지 
+        // 방문자 메세지
         <div className="message myself">
           { !skipTime() && (
             <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
           )}
-          { messageInner }
+
+          <ChatMessageInner
+            type={props.type}
+            message={props.message}
+            onClickLink={url=> window.open(url)}
+            onClickImage={url=> imageView(url)}
+            onLoadImage={props.onLoadImage}
+            timestamp={props.timestamp}
+          />
         </div>
       ) : (
         // 관리자 메세지
@@ -113,7 +85,16 @@ const Message = (props) => {
               </div>
             )}
             <div className="message-bottom">
-              { messageInner }
+
+              <ChatMessageInner
+                type={props.type}
+                message={props.message}
+                onClickLink={url=> window.open(url)}
+                onClickImage={url=> imageView(url)}
+                onLoadImage={props.onLoadImage}
+                timestamp={props.timestamp}
+              />
+
               { !skipTime() && (
                 <div className="message-time">{ script.timestampToTime(props.timestamp, true) }</div>
               )}
@@ -125,4 +106,6 @@ const Message = (props) => {
   )
 }
 
-export default Message
+// export default ChatMessage
+export default React.memo(Message)
+

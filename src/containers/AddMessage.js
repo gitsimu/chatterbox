@@ -128,7 +128,6 @@ const AddMessage = ({database, dispatch, info}) => {
 
 const mapStateToProps = state => ({
   info: state.info,
-  message: state.message
 })
 
 export default connect(mapStateToProps)(AddMessage)
