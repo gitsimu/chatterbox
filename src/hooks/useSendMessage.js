@@ -29,8 +29,9 @@ const useSendMessage = (database) => {
       break;
     }
 
+    const workingTime = script.checkWorkingTime(info.config.workingDay)
     list.forEach((h, i)=> {
-      updateDatabase(h.userId, h.message, h.type, h.timestamp, myLast === i)
+      updateDatabase(h.userId, h.message, h.type, h.timestamp, myLast === i && workingTime)
     })
   }
 
@@ -95,7 +96,7 @@ const useSendMessage = (database) => {
       timestamp: timestamp
     })
 
-    if (!noti || !script.checkWorkingTime(info.config.workingDay)) return
+    if (!noti) return
 
     database.ref(`/${info.key}/recents`).update({
       userId: senderId,
