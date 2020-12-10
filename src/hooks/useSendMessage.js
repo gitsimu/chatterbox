@@ -7,10 +7,12 @@ import axios from 'axios'
 const useSendMessage = (database) => {
   const sendingTerm = React.useRef(false)
   const info = useSelector(state => state.info)
+  const authRef = React.useRef(info.auth)
 
   const beforeAuthMessage = React.useRef([])
 
   React.useEffect(() => {
+    authRef.current = info.auth
     if(!info.auth) return
 
     let m
@@ -47,7 +49,7 @@ const useSendMessage = (database) => {
   }
 
   const updateDatabase = function (senderId, message, type, timestamp, noti) {
-    if (!info.auth) {
+    if (!authRef.current) {
       beforeAuthMessage.current.push(arguments)
       return
     }

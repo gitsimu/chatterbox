@@ -101,24 +101,24 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
 
           return
         }
-        else {
-          currentChatbot.questions.map(m => {
-            let message = {
-              id: Math.random().toString(36).substr(2, 9),
-              userId: info.key,
-              message: m.message,
-              type: m.type,
-              timestamp: currentTimestamp++
-            }
-            chatbotHistory.current.push(message)
-            addMessage(message)
-          })
-        }
+
+        currentChatbot.questions.map(m => {
+          let message = {
+            id: Math.random().toString(36).substr(2, 9),
+            userId: info.key,
+            message: m.message,
+            type: m.type,
+            timestamp: currentTimestamp++
+          }
+          chatbotHistory.current.push(message)
+          addMessage(message)
+        })
 
         if(currentChatbot.action === "CHAT"){
           setActiveAddMessage(true)
           sendMessageList(chatbotHistory.current.splice(0))
           startMessageListener(currentTimestamp)
+          setCurrentChatbot(null)
         }
       })
       .finally(() => setChatbotLoading(false))
@@ -225,11 +225,7 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
       )}
 
       {(!chatbotLoading && currentChatbot && currentChatbot.answers?.length > 0) && (
-        <div
-          style={{
-            textAlign:'right',
-            margin :'15px'
-          }}>
+        <div className="chatbot-buttons">
           {currentChatbot.answers.map((answer, index) => (
             <button
               key={`${chatbotHistory.current.length}_${index}`}

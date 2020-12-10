@@ -602,6 +602,7 @@ iframe.chatterbox-iframe.active {
   width: 10px;
   border-radius: 10px;
   animation: chatbot-loading 1s ease-in-out infinite;
+  -webkit-animation: chatbot-loading 1s ease-in-out infinite;;
 }
 .chatbot-loading{
   position: relative;
@@ -611,7 +612,9 @@ iframe.chatterbox-iframe.active {
   left: 15px;
   border-radius: 10px;
   animation: chatbot-loading 1s ease-in-out infinite;
+  -webkit-animation: chatbot-loading 1s ease-in-out infinite;
   animation-delay: 0.25s;
+  -webkit-animation-delay: 0.25s;
 }
 .chatbot-loading::after{
   content: '';
@@ -622,11 +625,20 @@ iframe.chatterbox-iframe.active {
   width: 10px;
   border-radius: 10px;
   animation: chatbot-loading 1s ease-in-out infinite;
+  -webkit-animation: chatbot-loading 1s ease-in-out infinite;
   animation-delay: 0.5s;
+  -webkit-animation-delay: 0.5s;
+}
+@-webkit-keyframes chatbot-loading {
+  0%{background-color: rgba(255, 255, 255, .2);}
+  25%{background-color: rgba(0, 0, 0, 0.35);}
+  50%{background-color: rgba(255, 255, 255, .2);}
+  75%{background-color: rgba(255, 255, 255, .2);}
+  100%{background-color: rgba(255, 255, 255, .2);}
 }
 @keyframes chatbot-loading{
   0%{background-color: rgba(255, 255, 255, .2);}
-  25%{background-color: #00000059;}
+  25%{background-color: rgba(0, 0, 0, 0.35);}
   50%{background-color: rgba(255, 255, 255, .2);}
   75%{background-color: rgba(255, 255, 255, .2);}
   100%{background-color: rgba(255, 255, 255, .2);}
@@ -674,17 +686,32 @@ iframe.chatterbox-iframe.active {
   font-size: 13px;
   font-weight: 600;
   max-width: 280px;
-  margin: 3px 5px;
   word-break: break-word;
   background-color: rgb(255, 255, 255);
   border-radius: 12px;
   border-color: rgb(228, 228, 229);
   border-width: 1px;
   border-style: solid;
-  padding: 10px 15px;
+  padding: 5px 15px;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   outline: none;
+  margin: 3px;
+  transition: 0.2s ease border;
+  display: inline-flex;
 }
 .chatbot-button:hover {
+  border-color: #006cff;
   background-color: #a4bad440;
+
+}
+.chatbot-buttons {
+  width: 80%;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: 15px;
+  font-size: 0;
+  text-align: right;
 }
