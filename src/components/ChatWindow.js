@@ -199,6 +199,8 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
         />
       ))}
 
+
+
       {chatbotLoading && (
         <div className="message opponent">
           <div className="message-profile">

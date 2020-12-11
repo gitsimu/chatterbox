@@ -11,14 +11,14 @@ const IFrame = ({ children, ...props }) => {
     if (!contentsRef) return
 
     window.addEventListener('message', function(e) {
-      if (!e.data.method) return      
+      if (!e.data.method) return
 
       switch (e.data.method) {
         case 'open':
           isActive(true)
           break
         case 'close':
-          isActive(false)          
+          isActive(false)
           setTimeout(() => {
             contentsRef.style.setProperty('z-index', '-1', 'important')
           }, 500)
@@ -38,35 +38,35 @@ const IFrame = ({ children, ...props }) => {
           break
       }
     })
-    
+
     // console.log(e.data)
     // console.log('iframe ref', contentsRef)
   }, [contentsRef])
 
   if (contentsRef) {
-    let cssText = 'width: 350px !important;' 
+    let cssText = 'width: 350px !important;'
       + 'height: 600px !important;'
-      + 'border: none !important;' 
-      + 'border-radius: 20px !important;' 
-      + 'box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 30px 0px !important;' 
+      + 'border: none !important;'
+      + 'border-radius: 20px !important;'
+      + 'box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 30px 0px !important;'
       + 'position: fixed !important;'
       + 'z-index: 9999999999 !important;'
 
     switch(props.location) {
-      case 'lt':        
+      case 'lt':
         cssText += 'top: 15px !important;'
         cssText += 'left: 15px !important;'
         break
-      case 'rt':        
+      case 'rt':
         cssText += 'top: 15px !important;'
         cssText += 'right: 15px !important;'
         break
-      case 'lb':        
+      case 'lb':
         cssText += 'bottom: 15px !important;'
         cssText += 'left: 15px !important;'
         break
       case 'rb':
-      default:        
+      default:
         cssText += 'bottom: 15px !important;'
         cssText += 'right: 15px !important;'
         break
@@ -82,10 +82,10 @@ const IFrame = ({ children, ...props }) => {
         className={active ? 'chatterbox-iframe active' : 'chatterbox-iframe'}
         ref={setContentsRef}>
         {mountNode &&
-          createPortal(
-            React.Children.only(children),
-            mountNode
-          )}
+        createPortal(
+          React.Children.only(children),
+          mountNode
+        )}
       </iframe>
       { imagePreview }
     </>

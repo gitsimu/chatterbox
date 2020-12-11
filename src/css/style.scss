@@ -655,25 +655,6 @@ iframe.chatterbox-iframe.active {
   75%{background-color: rgba(255, 255, 255, .2);}
   100%{background-color: rgba(255, 255, 255, .2);}
 }
-
-.chatbot-message {
-  font-size: 13px;
-  max-width: 280px;
-  margin: 3px 5px;
-  word-break: break-word;
-  background-color: #fff;
-  border-radius: 15px;
-  border-color: rgb(228, 228, 229);
-  border-width: 1px;
-  border-style: solid;
-  padding: 10px;
-  cursor: pointer;
-  animation: fadein .3s ease-in-out;
-  outline: none;
-}
-.chatbot-message:hover {
-  background-color: #a4bad440;
-}
 .message-thumbnail.simple-thumbnail{
   width: 250px;
   margin: 0;
@@ -705,6 +686,7 @@ iframe.chatterbox-iframe.active {
   border-width: 1px;
   border-style: solid;
   padding: 5px 15px;
+  height: 0;
   min-height: 36px;
   align-items: center;
   justify-content: center;
@@ -715,8 +697,8 @@ iframe.chatterbox-iframe.active {
   display: inline-flex;
 }
 .chatbot-button:hover {
-  border-color: #006cff;
-  background-color: #a4bad440;
+  border-color: rgb(0, 108, 255);
+  background-color: rgba(164, 186, 212, 0.25);
 
 }
 .chatbot-buttons {
