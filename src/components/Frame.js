@@ -8,6 +8,8 @@ const IFrame = ({ children, ...props }) => {
   const mountNode = contentsRef && contentsRef.contentWindow.document.body
 
   React.useEffect(() => {
+    if (!contentsRef) return
+
     window.addEventListener('message', function(e) {
       if (!e.data.method) return      
 
@@ -16,7 +18,10 @@ const IFrame = ({ children, ...props }) => {
           isActive(true)
           break
         case 'close':
-          isActive(false)
+          isActive(false)          
+          setTimeout(() => {
+            contentsRef.style.setProperty('z-index', '-1', 'important')
+          }, 500)
           break
         case 'image':
           setImagePreview(
@@ -36,36 +41,38 @@ const IFrame = ({ children, ...props }) => {
     
     // console.log(e.data)
     // console.log('iframe ref', contentsRef)
-  }, [])
+  }, [contentsRef])
 
   if (contentsRef) {
-    contentsRef.style.setProperty('width', '350px', 'important')
-    contentsRef.style.setProperty('height', '600px', 'important')
-    contentsRef.style.setProperty('border', 'none', 'important')
-    contentsRef.style.setProperty('border-radius', '20px', 'important')
-    contentsRef.style.setProperty('box-shadow', '0px 5px 30px 0px rgba(0,0,0,0.1)', 'important')
-    contentsRef.style.setProperty('position', 'fixed', 'important')
-    contentsRef.style.setProperty('z-index', '9999999999', 'important')
+    let cssText = 'width: 350px !important;' 
+      + 'height: 600px !important;'
+      + 'border: none !important;' 
+      + 'border-radius: 20px !important;' 
+      + 'box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 30px 0px !important;' 
+      + 'position: fixed !important;'
+      + 'z-index: 9999999999 !important;'
 
     switch(props.location) {
-      case 'lt':
-        contentsRef.style.setProperty('top', '15px', 'important')
-        contentsRef.style.setProperty('left', '15px', 'important')
+      case 'lt':        
+        cssText += 'top: 15px !important;'
+        cssText += 'left: 15px !important;'
         break
-      case 'rt':
-        contentsRef.style.setProperty('top', '15px', 'important')
-        contentsRef.style.setProperty('right', '15px', 'important')
+      case 'rt':        
+        cssText += 'top: 15px !important;'
+        cssText += 'right: 15px !important;'
         break
-      case 'lb':
-        contentsRef.style.setProperty('bottom', '15px', 'important')
-        contentsRef.style.setProperty('left', '15px', 'important')
+      case 'lb':        
+        cssText += 'bottom: 15px !important;'
+        cssText += 'left: 15px !important;'
         break
       case 'rb':
-      default:
-        contentsRef.style.setProperty('bottom', '15px', 'important')
-        contentsRef.style.setProperty('right', '15px', 'important')
+      default:        
+        cssText += 'bottom: 15px !important;'
+        cssText += 'right: 15px !important;'
         break
     }
+
+    contentsRef.style.cssText = cssText
   }
 
   return (
