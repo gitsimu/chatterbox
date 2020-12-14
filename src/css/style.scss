@@ -672,7 +672,8 @@ iframe.chatterbox-iframe.active {
 }
 .message-link-text i {
   font-size: 20px;
-  color: blue;
+  color: #222;
+  margin-left: 5px;
 }
 
 .chatbot-button {
@@ -693,13 +694,15 @@ iframe.chatterbox-iframe.active {
   cursor: pointer;
   outline: none;
   margin: 3px;
-  transition: 0.2s ease border;
+  // transition: 0.2s ease border;
   display: inline-flex;
 }
 .chatbot-button:hover {
-  border-color: rgb(0, 108, 255);
-  background-color: rgba(164, 186, 212, 0.25);
-
+  // border-color: rgb(0, 108, 255);
+  // background-color: rgba(164, 186, 212, 0.25);
+  background: #0080F7;
+  color: #fff;
+  border-color: #0080F7;
 }
 .chatbot-buttons {
   width: 80%;
