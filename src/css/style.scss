@@ -194,6 +194,7 @@ iframe.chatterbox-iframe.active {
     white-space: pre-line !important;
     word-break: break-word !important;
     overflow-wrap: break-word !important;
+    max-width: 80%;
   }
   .message-time {
     font-size: 10px;
@@ -486,11 +487,11 @@ iframe.chatterbox-iframe.active {
 
 .chat-closed {
   position: absolute;
-  left: 10%;
+  left: 5%;
   bottom: 20px;
-  width: 80%;
+  width: 90%;
   padding: 10px;
-  border: 1px solid #eee;
+  border: 1px solid #ddd;
   font-size: 13px;
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.9);
