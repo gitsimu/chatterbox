@@ -67,7 +67,7 @@ const pad = (n) => {
 }
 
 export const checkWorkingTime = (w) => {
-  if (!w) {
+  if (!w || !w.use) {
     return true
   }
 
