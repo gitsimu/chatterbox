@@ -15,7 +15,8 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
   const [sendMessage, sendMessageList] = useSendMessage(database)
   const [currentChatbot, setCurrentChatbot] = React.useState(null)
   const [chatbotLoading, setChatbotLoading] = React.useState(false)
-  const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message, currentChatbot, chatbotLoading])
+  const [typing, setTyping] = React.useState(false)
+  const [scrollTo, setScrollBottom, setScrollFix] = useScrollTo(body.current, [message, currentChatbot, chatbotLoading, typing])
 
   const isActiveChatbot = ()=> {
     switch (`${info.config.chatbot.state}`){
@@ -174,6 +175,34 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
     }
   }, [info.id])
 
+  React.useEffect(() => {
+    let setFalseId = null
+    setTyping(false)
+
+    const typingRef = database.ref(`/${info.key}/users/${info.id}/typingAdmin`)
+    typingRef.on('value', (snapshot) => {
+      if(setFalseId) clearTimeout(setFalseId)
+
+      const value = snapshot.val() || {}
+      const typingAdmin = Object.keys(value)
+        .find(t => value[t] > new Date().getTime())
+
+      if(!typingAdmin) {
+        setTyping(false)
+        return
+      }
+
+      setTyping(true)
+      setFalseId = setTimeout(()=> {
+        setTyping(false)
+      }, value[typingAdmin] - new Date().getTime())
+    })
+
+    return ()=> {
+      typingRef.off()
+    }
+  }, [info.id])
+
   return (
     <div
       className="chat-window-body"
@@ -199,31 +228,15 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
         />
       ))}
 
-
-
-      {chatbotLoading && (
-        <div className="message opponent">
-          <div className="message-profile">
-
-            { info.config.profileImage ? (
-              <div className="message-profile-image">
-                <img src={ JSON.parse(info.config.profileImage).location }/>
-              </div>
-            ) : (
-              <div className="message-profile-icon" style={{backgroundColor: info.config.themeColor}}>{ info.config.nickname.substring(0, 1) }</div>
-            )}
-
-          </div>
-          <div className="message-body">
-            <div className="message-top">
-            </div>
-            <div className="message-bottom">
-              <div className="message-inner" style={{width : '65px'}}>
-                <div className="chatbot-loading"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {(typing || chatbotLoading) && (
+        <Message
+          info={info}
+          onLoadImage={scrollTo}
+          userId={info.key}
+          type={-1}
+          skipDate={true}
+          skipTime={true}
+        />
       )}
 
       {(!chatbotLoading && currentChatbot && currentChatbot.answers?.length > 0) && (
@@ -237,7 +250,6 @@ const ChatWindow = ({info, message, clearMessage, initMessage, addMessage, pagin
           ))}
         </div>
       )}
-
 
       {/* { false && (
         <div

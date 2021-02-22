@@ -606,50 +606,50 @@ iframe.chatterbox-iframe.active {
 	100% {opacity:1;  transform: translateY(0);}
 }
 
-.chatbot-loading::before{
+.typing-loading::before{
   content: '';
   position: absolute;
   top: 0px;
-  left: -15px;
-  height: 10px;
-  width: 10px;
+  left: -11px;
+  height: 6px;
+  width: 6px;
   border-radius: 10px;
-  animation: chatbot-loading 1s ease-in-out infinite;
-  -webkit-animation: chatbot-loading 1s ease-in-out infinite;;
+  animation: typing-loading 1s ease-in-out infinite;
+  -webkit-animation: typing-loading 1s ease-in-out infinite;;
 }
-.chatbot-loading{
+.typing-loading{
   position: relative;
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   top: 46%;
   left: 15px;
   border-radius: 10px;
-  animation: chatbot-loading 1s ease-in-out infinite;
-  -webkit-animation: chatbot-loading 1s ease-in-out infinite;
+  animation: typing-loading 1s ease-in-out infinite;
+  -webkit-animation: typing-loading 1s ease-in-out infinite;
   animation-delay: 0.25s;
   -webkit-animation-delay: 0.25s;
 }
-.chatbot-loading::after{
+.typing-loading::after{
   content: '';
   position: absolute;
   top: 0px;
-  left: 15px;
-  height: 10px;
-  width: 10px;
+  left: 11px;
+  height: 6px;
+  width: 6px;
   border-radius: 10px;
-  animation: chatbot-loading 1s ease-in-out infinite;
-  -webkit-animation: chatbot-loading 1s ease-in-out infinite;
+  animation: typing-loading 1s ease-in-out infinite;
+  -webkit-animation: typing-loading 1s ease-in-out infinite;
   animation-delay: 0.5s;
   -webkit-animation-delay: 0.5s;
 }
-@-webkit-keyframes chatbot-loading {
+@-webkit-keyframes typing-loading {
   0%{background-color: rgba(255, 255, 255, .2);}
   25%{background-color: rgba(0, 0, 0, 0.35);}
   50%{background-color: rgba(255, 255, 255, .2);}
   75%{background-color: rgba(255, 255, 255, .2);}
   100%{background-color: rgba(255, 255, 255, .2);}
 }
-@keyframes chatbot-loading{
+@keyframes typing-loading{
   0%{background-color: rgba(255, 255, 255, .2);}
   25%{background-color: rgba(0, 0, 0, 0.35);}
   50%{background-color: rgba(255, 255, 255, .2);}

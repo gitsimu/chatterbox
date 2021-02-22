@@ -10,6 +10,7 @@ const Message = (props) => {
   const nickname = config.nickname || 'Manager'
 
   const skipDate = () => {
+    if (props.skipDate) return true
     if (!props.prev) return false
 
     const prevDate = script.timestampToDay(props.prev.timestamp)
@@ -19,6 +20,7 @@ const Message = (props) => {
   }
 
   const skipTime = () => {
+    if (props.skipTime) return true
     if ([3, 4].includes(props.type)) return true
 
     if (!props.next || props.next.userId !== props.userId) {

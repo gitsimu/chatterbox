@@ -80,6 +80,29 @@ const AddMessage = ({database, dispatch, info}) => {
     showEmojiContainer(!emojiContainer)
   }
 
+  const throttleTyping = (callback, ms) => {
+    let last = 0
+    let _beforeIsEmpty = true
+
+    return function(e) {
+      const beforeIsEmpty = _beforeIsEmpty
+      const isEmpty = !e.target.value
+      _beforeIsEmpty = isEmpty
+      const current = new Date().getTime()
+      if(current < last + ms && beforeIsEmpty === isEmpty) {
+        return
+      }
+
+      last = current
+      callback.call(this, e)
+    }
+  }
+  const startTyping = React.useCallback(throttleTyping((e) => {
+    database.ref(`/${info.key}/users/${info.id}/typingUser`).update({
+      timestamp: new Date().getTime() + (e.target.value ? 30000 : 3000)
+    })
+  }, 1000), [database, info.id]);
+
   return (
     <div className="bottom">
       <EmojiContainer
@@ -93,6 +116,9 @@ const AddMessage = ({database, dispatch, info}) => {
         sendMessage(input.value, 1)
         showEmojiContainer(false)
         input.value = ''
+        database.ref(`/${info.key}/users/${info.id}/typingUser`).update({
+          timestamp: 0
+        })
       }}>
         <div className="addOns">
           <label>
@@ -117,7 +143,9 @@ const AddMessage = ({database, dispatch, info}) => {
                       }
                       form.dispatchEvent(submitEvent)
                     }
-                  }}/>
+                  }}
+                  onChange={startTyping}
+        />
         <button className="message-button-send" type="submit">
           <i className="icon-paper-plane" aria-hidden="true"></i>
         </button>

@@ -1,6 +1,7 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-import * as firebase from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/database'
 import * as script from '../js/script'
 import axios from 'axios'
 
