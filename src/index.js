@@ -1,11 +1,10 @@
+import "core-js/stable"
+import "regenerator-runtime/runtime"
 import React from "react"
 import ReactDOM from "react-dom"
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import rootReducer from './reducers'
-
-import "core-js/stable"
-import "regenerator-runtime/runtime"
 
 import App from './containers/App'
 import * as script from './js/script.js'
@@ -17,11 +16,11 @@ const chatData = parent.smtgs_chat_data || {}
 const customData = parent.smtgs_chat_custom_data || {}
 
 // base
-const key = chatData.key || 'rndsmlch1'
+const key = chatData.key || ''
 const ck = chatData.ck || ''
 const muid = chatData.muid || ''
 const ip = chatData.ip || ''
-const svid = chatData.svid || '1240'
+const svid = chatData.svid || ''
 
 const iconConfig = {
   themeColor: chatData.themeColor || '#0080F7',

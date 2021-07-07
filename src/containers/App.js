@@ -8,6 +8,7 @@ import FirebaseConfig from '../../firebase.config'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import 'firebase/performance'
 
 import {connect} from 'react-redux'
 import {addConfig, authEnd, reConnect} from '../actions'
@@ -15,6 +16,9 @@ import * as global from '../js/global.js'
 import * as script from '../js/script.js'
 import '../css/style.scss'
 import useMultiLoading from '../hooks/useMultiLoading'
+
+// fetch polyfill
+import 'whatwg-fetch'
 
 const App = ({ info, addConfig, reConnect, authEnd }) => {
   const [iconActive, isIconActive] = React.useState(true)
@@ -107,6 +111,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
     console.info('[Smartlog] chat connected')
     !firebase.apps.length && firebase.initializeApp(FirebaseConfig)
     const _database = firebase.database()
+    const perf = firebase.performance()
 
     const configRef = _database.ref(`/${info.key}/config`)
     const userRef = _database.ref(`/${info.key}/users/${info.id}`)
