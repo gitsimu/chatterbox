@@ -6,12 +6,20 @@ import * as global from '../js/global.js'
 import '../css/style.scss'
 import useSendMessage from '../hooks/useSendMessage'
 
-const AddMessage = ({database, dispatch, info}) => {
+const AddMessage = ({isFirstMessage, database, dispatch, info}) => {
   const [emojiContainer, showEmojiContainer] = React.useState(false)
   const [selectedEmoji, selectEmoji] = React.useState(null)
   const [sendMessage] = useSendMessage(database)
 
   let form, input
+
+  const smlogConversion = () => {
+    if(!isFirstMessage) return;
+
+    const conversion = parent['smtg_conversion_chat']
+    if(typeof conversion !== 'function') return;
+    conversion()
+  }
 
   React.useEffect(() => {
     if (input && selectedEmoji) {
@@ -57,19 +65,19 @@ const AddMessage = ({database, dispatch, info}) => {
     formData.append('key', info.key)
 
     dispatch({type: 'LOADING', isLoading: true})
-
+    smlogConversion()
     return axios.post(`${global.serverAddress()}/api/upload`, formData, config)
-                .then(res => {
-                  if (res.data.result === 'success') {
-                    sendMessage(JSON.stringify(res.data.file), 2)
-                  }
-                })
-                .catch(err => {
-                  if (err) throw err
-                })
-                .finally(() => {
-                  dispatch({type: 'LOADING', isLoading: false})
-                })
+      .then(res => {
+        if (res.data.result === 'success') {
+          sendMessage(JSON.stringify(res.data.file), 2)
+        }
+      })
+      .catch(err => {
+        if (err) throw err
+      })
+      .finally(() => {
+        dispatch({type: 'LOADING', isLoading: false})
+      })
   }
 
   const handleFileInputClear = (e) => {
@@ -116,6 +124,7 @@ const AddMessage = ({database, dispatch, info}) => {
         sendMessage(input.value, 1)
         showEmojiContainer(false)
         input.value = ''
+        smlogConversion()
         database.ref(`/${info.key}/users/${info.id}/typingUser`).update({
           timestamp: 0
         })
@@ -156,6 +165,7 @@ const AddMessage = ({database, dispatch, info}) => {
 
 const mapStateToProps = state => ({
   info: state.info,
+  isFirstMessage : state.message.filter((t)=> t.userId === state.info.id).length === 0
 })
 
 export default connect(mapStateToProps)(AddMessage)
