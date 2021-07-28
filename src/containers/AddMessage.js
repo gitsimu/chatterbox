@@ -106,8 +106,13 @@ const AddMessage = ({isFirstMessage, database, dispatch, info}) => {
     }
   }
   const startTyping = React.useCallback(throttleTyping((e) => {
-    database.ref(`/${info.key}/users/${info.id}/typingUser`).update({
-      timestamp: new Date().getTime() + (e.target.value ? 30000 : 3000)
+    database.ref(`/${info.key}/users/${info.id}`).once('value')
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        database.ref(`/${info.key}/users/${info.id}/typingUser`).update({
+          timestamp: new Date().getTime() + (e.target.value ? 30000 : 3000)
+        })
+      }
     })
   }, 1000), [database, info.id]);
 
