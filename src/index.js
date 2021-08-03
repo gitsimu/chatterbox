@@ -12,8 +12,8 @@ import * as script from './js/script.js'
 const rootElement = document.getElementById ('chatterbox-root')
 const store = createStore(rootReducer)
 
-const chatData = parent.smtgs_chat_data || {}
-const customData = parent.smtgs_chat_custom_data || {}
+const chatData = parent.smtgs_chat_data || window.smtgs_chat_data || {}
+const customData = parent.smtgs_chat_custom_data || window.smtgs_chat_custom_data || {}
 
 // base
 const key = chatData.key || ''
