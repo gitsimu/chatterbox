@@ -41,7 +41,7 @@ const App = ({ info, addConfig, reConnect, authEnd }) => {
       const iframe = document.querySelector('iframe.chatterbox-iframe')
       if (iframe) {
         let cssLink = document.createElement("link")
-        cssLink.href = `${global.serverAddress()}/plugin/style.css` // prod
+        cssLink.href = 'https://src.smlog.co.kr/css/style.css' // prod
         // cssLink.href = "./style.css" // dev
         cssLink.rel = "stylesheet"
         cssLink.type = "text/css"
